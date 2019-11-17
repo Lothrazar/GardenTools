@@ -33,8 +33,27 @@ public class ItemTiller extends HoeItem {
     BlockPos blockpos = null;
     for (int dist = 0; dist < getRange(); dist++) {
       blockpos = center.offset(face, dist);
-      if (world.isAirBlock(blockpos.up())) {
+      if (world.isAirBlock(blockpos)) {
+        //air here, went off an edge. try to go down 1
+        blockpos = blockpos.down();
+        if (world.isAirBlock(blockpos.up())) {
+          if (hoeBlock(context, blockpos)) {
+            center = center.down();//go down the hill
+          }
+        }
+      }
+      else if (world.isAirBlock(blockpos.up())) {
+        //at my elevation
         hoeBlock(context, blockpos);
+      }
+      else {
+        //try going up by 1
+        blockpos = blockpos.up();
+        if (world.isAirBlock(blockpos.up())) {
+          if (hoeBlock(context, blockpos)) {
+            center = center.up();//go up the hill
+          }
+        }
       }
     }
     return succ;
@@ -44,7 +63,7 @@ public class ItemTiller extends HoeItem {
     return 9;
   }
 
-  private void hoeBlock(ItemUseContext context, BlockPos blockpos) {
+  private boolean hoeBlock(ItemUseContext context, BlockPos blockpos) {
     World world = context.getWorld();
     Block blockHere = world.getBlockState(blockpos).getBlock();
     BlockState blockstate = HOE_LOOKUP.get(blockHere);
@@ -65,6 +84,8 @@ public class ItemTiller extends HoeItem {
         }
       }
       //           return ActionResultType.SUCCESS;
+      return true;
     }
+    return false;
   }
 }
