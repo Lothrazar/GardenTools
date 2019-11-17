@@ -2,11 +2,14 @@ package com.lothrazar.gardentools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.lothrazar.gardentools.block.BlockIrrigation;
 import com.lothrazar.gardentools.item.ItemTiller;
 import com.lothrazar.gardentools.setup.ClientProxy;
 import com.lothrazar.gardentools.setup.IProxy;
 import com.lothrazar.gardentools.setup.ServerProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemTier;
@@ -20,6 +23,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ObjectHolder;
 
 // TODO: The value here should match an entry in the META-INF/mods.toml file
 // TODO: Also search and replace it in build.gradle
@@ -50,20 +55,29 @@ public class ExampleMod {
     //you probably will not need this
   }
 
+  @ObjectHolder(MODID + ":irrigation_core")
+  private static Block irrigation;
+
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
 
     @SubscribeEvent
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
-      // register a new block here
-      //      event.getRegistry().register(___);
+      // register a new block here 
+      event.getRegistry().register(new BlockIrrigation(Block.Properties.create(Material.EARTH)).setRegistryName("irrigation_core"));
     }
 
     @SubscribeEvent
     public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
+      IForgeRegistry<Item> r = event.getRegistry();
       Item.Properties properties = new Item.Properties().group(ItemGroup.TOOLS);// tab group
-      // create a static registry using static variables annoated with  net.minecraftforge.registries.ObjectHolder
-      event.getRegistry().register(new ItemTiller(ItemTier.GOLD, properties).setRegistryName("cultivator"));
+      r.register(new ItemTiller(ItemTier.GOLD, properties).setRegistryName("cultivator"));
+      r.register(new BlockItem(irrigation, properties).setRegistryName("irrigation_core"));
+      //JOBS
+      // cultivate field
+      // water field
+      // plant
+      // ? harvest maybe or maybe not
     }
   }
 
