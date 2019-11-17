@@ -16,7 +16,7 @@ public class ConfigManager {
   }
 
   private static void initConfig() {
-    COMMON_BUILDER.comment("General settings").push(ExampleMod.MODID);
+    COMMON_BUILDER.comment("General settings").push(GardenMod.MODID);
     TOOLTIPS = COMMON_BUILDER.comment("Testing config Tooltip").define("itemTooltip", true);
     COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();

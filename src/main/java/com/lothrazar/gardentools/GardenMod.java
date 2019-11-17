@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemTier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -24,12 +23,11 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
 // TODO: The value here should match an entry in the META-INF/mods.toml file
 // TODO: Also search and replace it in build.gradle
-@Mod(ExampleMod.MODID)
-public class ExampleMod {
+@Mod(GardenMod.MODID)
+public class GardenMod {
 
   public static final String MODID = "gardentools";
   public static final String certificateFingerprint = "@FINGERPRINT@";
@@ -37,7 +35,7 @@ public class ExampleMod {
   public static final Logger LOGGER = LogManager.getLogger();
   public static ConfigManager config;
 
-  public ExampleMod() {
+  public GardenMod() {
     // Register the setup method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     //only for server starting
@@ -55,9 +53,6 @@ public class ExampleMod {
     //you probably will not need this
   }
 
-  @ObjectHolder(MODID + ":irrigation_core")
-  private static Block irrigation;
-
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
 
@@ -70,9 +65,9 @@ public class ExampleMod {
     @SubscribeEvent
     public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
       IForgeRegistry<Item> r = event.getRegistry();
-      Item.Properties properties = new Item.Properties().group(ItemGroup.TOOLS);// tab group
+      Item.Properties properties = new Item.Properties().group(GardenRegistry.itemGroup);// tab group
       r.register(new ItemTiller(ItemTier.GOLD, properties).setRegistryName("cultivator"));
-      r.register(new BlockItem(irrigation, properties).setRegistryName("irrigation_core"));
+      r.register(new BlockItem(GardenRegistry.irrigation, properties).setRegistryName("irrigation_core"));
       //JOBS
       // cultivate field
       // water field
