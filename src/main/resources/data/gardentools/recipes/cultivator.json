@@ -1,19 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#-#",
-    "#-#"
+    "  h",
+    " s ",
+    "s  "
   ],
   "key": {
-    "#": {
-      "item": "minecraft:acacia_log"
+    "h": {
+      "item": "minecraft:golden_hoe"
     },
-    "-": {
+    "s": {
       "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "absentbydesign:fence_log_acacia",
-    "count": 6
+    "item": "gardentools:cultivator",
+    "count": 1
   }
 }
