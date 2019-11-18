@@ -3,6 +3,7 @@ package com.lothrazar.gardentools.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.ToolType;
 
@@ -10,6 +11,11 @@ public class BlockIrrigation extends Block {
 
   public BlockIrrigation(Properties properties) {
     super(properties.hardnessAndResistance(1.3F).harvestTool(ToolType.PICKAXE));
+  }
+
+  @Override
+  public BlockRenderLayer getRenderLayer() {
+    return BlockRenderLayer.CUTOUT_MIPPED;
   }
 
   @Override
