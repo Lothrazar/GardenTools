@@ -1,7 +1,9 @@
 {
-    "itemGroup.absentbydesign": "Absent by Design",
+    "itemGroup.gardentools": "Garden Tools",
 	"item.gardentools.cultivator":"Cultivator",
-	"block.gardentools.irrigation_core":"Irrigation Core"
+	"block.gardentools.irrigation_core":"Irrigation Core",
+	"item.gardentools.cultivator.tooltip":"Hoe farmland with range and elevation support",
+	"block.gardentools.irrigation_core.tooltip":"Keeps nearby farmland hydrated"
     
     
 }          
