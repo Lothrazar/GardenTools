@@ -4,20 +4,22 @@ import java.nio.file.Path;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 public class ConfigManager {
 
   private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
   private static ForgeConfigSpec COMMON_CONFIG;
-  private static BooleanValue TOOLTIPS;
+  private static IntValue TILLING_RANGE;
+  private static IntValue IRRIG_RANGE;
   static {
     initConfig();
   }
 
   private static void initConfig() {
     COMMON_BUILDER.comment("General settings").push(GardenMod.MODID);
-    TOOLTIPS = COMMON_BUILDER.comment("Testing config Tooltip").define("itemTooltip", true);
+    TILLING_RANGE = COMMON_BUILDER.comment("Tilling distance of cultivator item").defineInRange("cultivator.range", 9, 2, 32);
+    IRRIG_RANGE = COMMON_BUILDER.comment("Watering distance of irrigation block").defineInRange("irrigator.range", 4, 1, 16);
     COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();
   }
@@ -32,7 +34,11 @@ public class ConfigManager {
     COMMON_CONFIG.setConfig(configData);
   }
 
-  public boolean tooltips() {
-    return TOOLTIPS.get();
+  public int getTillingRange() {
+    return TILLING_RANGE.get();
+  }
+
+  public int getIrrigationRange() {
+    return IRRIG_RANGE.get();
   }
 }

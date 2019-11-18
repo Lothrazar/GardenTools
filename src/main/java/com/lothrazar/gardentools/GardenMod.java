@@ -44,8 +44,7 @@ public class GardenMod {
   }
 
   private void setup(final FMLCommonSetupEvent event) {
-    //now all blocks/items exist
-    config.tooltips();//config values used like this
+    //now all blocks/items exist 
   }
 
   @SubscribeEvent
@@ -66,8 +65,8 @@ public class GardenMod {
     public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
       IForgeRegistry<Item> r = event.getRegistry();
       Item.Properties properties = new Item.Properties().group(GardenRegistry.itemGroup);// tab group
-      r.register(new ItemTiller(ItemTier.GOLD, properties).setRegistryName("cultivator"));
-      r.register(new BlockItem(GardenRegistry.irrigation, properties).setRegistryName("irrigation_core"));
+      r.register(new BlockItem(GardenRegistry.irrigation, properties.maxDamage(0).maxStackSize(64)).setRegistryName("irrigation_core"));
+      r.register(new ItemTiller(ItemTier.GOLD, properties.maxStackSize(1).maxDamage(8888)).setRegistryName("cultivator"));
       //JOBS
       // cultivate field
       // water field

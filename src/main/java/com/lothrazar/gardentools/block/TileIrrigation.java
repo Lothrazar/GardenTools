@@ -1,5 +1,6 @@
 package com.lothrazar.gardentools.block;
 
+import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -8,7 +9,6 @@ import net.minecraftforge.common.ticket.AABBTicket;
 
 public class TileIrrigation extends TileEntity {
 
-  private static final int RANGE = 4;
   private AABBTicket farmlandTicket;
 
   public TileIrrigation() {
@@ -18,7 +18,7 @@ public class TileIrrigation extends TileEntity {
   @Override
   public void onLoad() {
     if (!world.isRemote) {
-      farmlandTicket = FarmlandWaterManager.addAABBTicket(world, new AxisAlignedBB(pos).grow(RANGE));
+      farmlandTicket = FarmlandWaterManager.addAABBTicket(world, new AxisAlignedBB(pos).grow(GardenMod.config.getIrrigationRange()));
       farmlandTicket.validate();
     }
   }

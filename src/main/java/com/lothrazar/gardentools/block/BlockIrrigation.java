@@ -2,15 +2,14 @@ package com.lothrazar.gardentools.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.FarmlandBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.common.ToolType;
 
 public class BlockIrrigation extends Block {
 
   public BlockIrrigation(Properties properties) {
-    super(properties);
-    FarmlandBlock x;
+    super(properties.hardnessAndResistance(0.8F).harvestTool(ToolType.PICKAXE));
   }
 
   @Override

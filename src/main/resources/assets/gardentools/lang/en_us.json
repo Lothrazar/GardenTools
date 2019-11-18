@@ -1,7 +1,7 @@
 {
     "itemGroup.absentbydesign": "Absent by Design",
 	"item.gardentools.cultivator":"Cultivator",
-	"item.gardentools.irrigation_core":"Irrigation Core"
+	"block.gardentools.irrigation_core":"Irrigation Core"
     
     
 }          

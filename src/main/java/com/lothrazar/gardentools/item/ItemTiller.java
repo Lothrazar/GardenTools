@@ -1,5 +1,6 @@
 package com.lothrazar.gardentools.item;
 
+import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +32,7 @@ public class ItemTiller extends HoeItem {
     //    context.getPlayer().getHorizontalFacing()
     Direction face = context.getPlacementHorizontalFacing();
     BlockPos blockpos = null;
-    for (int dist = 0; dist < getRange(); dist++) {
+    for (int dist = 0; dist < GardenMod.config.getTillingRange(); dist++) {
       blockpos = center.offset(face, dist);
       if (world.isAirBlock(blockpos)) {
         //air here, went off an edge. try to go down 1
@@ -59,10 +60,6 @@ public class ItemTiller extends HoeItem {
     return succ;
   }
 
-  private int getRange() {
-    return 9;
-  }
-
   private boolean hoeBlock(ItemUseContext context, BlockPos blockpos) {
     World world = context.getWorld();
     Block blockHere = world.getBlockState(blockpos).getBlock();
@@ -71,19 +68,13 @@ public class ItemTiller extends HoeItem {
       PlayerEntity playerentity = context.getPlayer();
       world.playSound(playerentity, blockpos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
       if (!world.isRemote) {
-        // TODO: some other tool or block
-        //        try {
-        //          blockstate = blockstate.with(FarmlandBlock.MOISTURE, 7);
-        //        }
-        //        catch (Exception e) {}
         world.setBlockState(blockpos, blockstate, 11);
         if (playerentity != null) {
-          context.getItem().damageItem(1, playerentity, (p_220043_1_) -> {
-            p_220043_1_.sendBreakAnimation(context.getHand());
+          context.getItem().damageItem(1, playerentity, (p) -> {
+            p.sendBreakAnimation(context.getHand());
           });
         }
       }
-      //           return ActionResultType.SUCCESS;
       return true;
     }
     return false;
