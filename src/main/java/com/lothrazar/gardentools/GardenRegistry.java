@@ -9,10 +9,6 @@ import net.minecraftforge.registries.ObjectHolder;
 
 public class GardenRegistry {
 
-  @ObjectHolder(GardenMod.MODID + ":irrigation_core")
-  static Block irrigation;
-  @ObjectHolder(GardenMod.MODID + ":irrigation_core")
-  public static TileEntityType<TileIrrigation> irrigationTile;
   public static ItemGroup itemGroup = new ItemGroup(GardenMod.MODID) {
 
     @Override
@@ -20,4 +16,8 @@ public class GardenRegistry {
       return new ItemStack(irrigation);
     }
   };
+  @ObjectHolder(GardenMod.MODID + ":irrigation_core")
+  static Block irrigation;
+  @ObjectHolder(GardenMod.MODID + ":irrigation_core")
+  public static TileEntityType<TileIrrigation> irrigationTile;
 }

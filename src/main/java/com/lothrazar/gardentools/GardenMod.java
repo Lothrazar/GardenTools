@@ -3,6 +3,7 @@ package com.lothrazar.gardentools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.lothrazar.gardentools.block.BlockIrrigation;
+import com.lothrazar.gardentools.block.TileIrrigation;
 import com.lothrazar.gardentools.item.ItemTiller;
 import com.lothrazar.gardentools.setup.ClientProxy;
 import com.lothrazar.gardentools.setup.IProxy;
@@ -12,6 +13,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTier;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -72,6 +74,12 @@ public class GardenMod {
       // water field
       // plant
       // ? harvest maybe or maybe not
+    }
+
+    @SubscribeEvent
+    public static void onTileEntityRegistry(RegistryEvent.Register<TileEntityType<?>> event) {
+      IForgeRegistry<TileEntityType<?>> r = event.getRegistry();
+      r.register(TileEntityType.Builder.create(TileIrrigation::new, GardenRegistry.irrigation).build(null).setRegistryName("irrigation_core"));
     }
   }
 

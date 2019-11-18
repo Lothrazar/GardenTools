@@ -9,7 +9,7 @@ import net.minecraftforge.common.ToolType;
 public class BlockIrrigation extends Block {
 
   public BlockIrrigation(Properties properties) {
-    super(properties.hardnessAndResistance(0.8F).harvestTool(ToolType.PICKAXE));
+    super(properties.hardnessAndResistance(1.3F).harvestTool(ToolType.PICKAXE));
   }
 
   @Override
