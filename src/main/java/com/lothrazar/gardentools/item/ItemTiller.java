@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FarmlandBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoeItem;
@@ -39,9 +41,9 @@ public class ItemTiller extends HoeItem {
 
   @Override
   public ActionResultType onItemUse(ItemUseContext context) {
-    ActionResultType succ = super.onItemUse(context);
-    if (context.getFace() == Direction.DOWN || succ != ActionResultType.SUCCESS) {
-      return succ;
+    //    ActionResultType succ = super.onItemUse(context);
+    if (context.getFace() == Direction.DOWN) {
+      return ActionResultType.FAIL;
     }
     //so we got a success from the initial block
     World world = context.getWorld();
@@ -74,7 +76,7 @@ public class ItemTiller extends HoeItem {
         }
       }
     }
-    return succ;
+    return ActionResultType.SUCCESS;
   }
 
   private boolean hoeBlock(ItemUseContext context, BlockPos blockpos) {
@@ -82,18 +84,29 @@ public class ItemTiller extends HoeItem {
     Block blockHere = world.getBlockState(blockpos).getBlock();
     BlockState blockstate = HOE_LOOKUP.get(blockHere);
     if (blockstate != null) {
-      PlayerEntity playerentity = context.getPlayer();
-      world.playSound(playerentity, blockpos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-      if (!world.isRemote) {
-        world.setBlockState(blockpos, blockstate, 11);
+      blockstate = this.moisturize(blockstate);
+      if (world.setBlockState(blockpos, blockstate, 11)) {
+        PlayerEntity playerentity = context.getPlayer();
+        world.playSound(playerentity, blockpos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
         if (playerentity != null) {
           context.getItem().damageItem(1, playerentity, (p) -> {
             p.sendBreakAnimation(context.getHand());
           });
         }
+        return true;
       }
-      return true;
     }
     return false;
+  }
+
+  private BlockState moisturize(BlockState blockstate) {
+    try {
+      if (blockstate.getBlock() == Blocks.FARMLAND && GardenMod.config.getMoisture() > 0)
+        blockstate = blockstate.with(FarmlandBlock.MOISTURE, GardenMod.config.getMoisture());
+    }
+    catch (Exception e) {
+      System.out.println(e.getLocalizedMessage());
+    }
+    return blockstate;
   }
 }

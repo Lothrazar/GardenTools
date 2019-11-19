@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  h",
+    " s ",
+    "s  "
+  ],
+  "key": {
+    "h": {    
+      "item": "minecraft:golden_hoe"
+    },
+    "s": {
+      "item": "minecraft:bone"
+    }
+  },
+  "result": {
+    "item": "gardentools:planter",
+    "count": 1
+  }
+}

@@ -35,28 +35,29 @@ public class ItemPlanter extends Item {
     World world = context.getWorld();
     PlayerEntity player = context.getPlayer();
     ItemStack seeds = ItemStack.EMPTY;
-    if (seeds.isEmpty()) {
-      return ActionResultType.FAIL;
-    }
     Direction face = context.getPlacementHorizontalFacing();
     BlockPos center = context.getPos().up();
     BlockPos blockpos = null;
-    for (int dist = 0; dist < GardenMod.config.getTillingRange(); dist++) {
+    int countPlanted = 0;
+    for (int dist = 0; dist < GardenMod.config.getPlantingRange(); dist++) {
+      if (seeds.isEmpty()) {
+        seeds = getSeed(player);
+        if (seeds.isEmpty()) {
+          break;//for sure done
+        }
+      }
       blockpos = center.offset(face, dist);
       if (world.getBlockState(blockpos.down()).getBlock() == Blocks.FARMLAND
           && world.isAirBlock(blockpos)) {
-        world.setBlockState(blockpos, Block.getBlockFromItem(seeds.getItem()).getDefaultState());
-        seeds.shrink(1);
-        if (seeds.isEmpty()) {
-          seeds = getSeed(player);
-          if (seeds.isEmpty()) {
-            break;//for sure done
-          }
+        // looks valid. try to plant
+        if (world.setBlockState(blockpos, Block.getBlockFromItem(seeds.getItem()).getDefaultState())) {
+          countPlanted++;
+          seeds.shrink(1);
         }
       }
     }
-    if (player != null) {
-      context.getItem().damageItem(1, player, (p) -> {
+    if (player != null && countPlanted > 0) {
+      context.getItem().damageItem(countPlanted, player, (p) -> {
         p.sendBreakAnimation(context.getHand());
       });
     }
