@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.lothrazar.gardentools.block.BlockIrrigation;
 import com.lothrazar.gardentools.block.TileIrrigation;
+import com.lothrazar.gardentools.item.ItemPlanter;
 import com.lothrazar.gardentools.item.ItemTiller;
 import com.lothrazar.gardentools.setup.ClientProxy;
 import com.lothrazar.gardentools.setup.IProxy;
@@ -68,7 +69,9 @@ public class GardenMod {
       IForgeRegistry<Item> r = event.getRegistry();
       Item.Properties properties = new Item.Properties().group(GardenRegistry.itemGroup);// tab group
       r.register(new BlockItem(GardenRegistry.irrigation, properties.maxDamage(0).maxStackSize(64)).setRegistryName("irrigation_core"));
-      r.register(new ItemTiller(ItemTier.GOLD, properties.maxStackSize(1).maxDamage(8888)).setRegistryName("cultivator"));
+      r.register(new ItemTiller(ItemTier.GOLD, properties.maxStackSize(1).maxDamage(777)).setRegistryName("cultivator"));
+      properties = new Item.Properties().group(GardenRegistry.itemGroup);
+      r.register(new ItemPlanter(properties.maxStackSize(1).maxDamage(777)).setRegistryName("planter"));
       //JOBS
       // cultivate field
       // water field

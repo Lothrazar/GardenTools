@@ -1,6 +1,7 @@
 {
     "itemGroup.gardentools": "Garden Tools",
 	"item.gardentools.cultivator":"Cultivator",
+	"item.gardentools.planter":"Trowel Planter",
 	"block.gardentools.irrigation_core":"Irrigation Core",
 	"item.gardentools.cultivator.tooltip":"Hoe farmland with range and elevation support",
 	"block.gardentools.irrigation_core.tooltip":"Keeps nearby farmland hydrated"
