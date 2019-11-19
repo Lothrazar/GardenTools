@@ -40,28 +40,67 @@ public class ItemPlanter extends Item {
     BlockPos blockpos = null;
     int countPlanted = 0;
     for (int dist = 0; dist < GardenMod.config.getPlantingRange(); dist++) {
+      //get seed ready if any are left
       if (seeds.isEmpty()) {
         seeds = getSeed(player);
         if (seeds.isEmpty()) {
           break;//for sure done
         }
       }
+      //advance position
       blockpos = center.offset(face, dist);
-      if (world.getBlockState(blockpos.down()).getBlock() == Blocks.FARMLAND
-          && world.isAirBlock(blockpos)) {
-        // looks valid. try to plant
-        if (world.setBlockState(blockpos, Block.getBlockFromItem(seeds.getItem()).getDefaultState())) {
-          countPlanted++;
-          seeds.shrink(1);
+      //manage going up/down by 1 elevation  
+      boolean didPlant = false;
+      if (world.isAirBlock(blockpos.down())) {
+        //air here, went off an edge. try to go down 1
+        blockpos = blockpos.down();
+        if (world.isAirBlock(blockpos)) {
+          if (tryPlantHere(world, seeds, blockpos)) {
+            center = center.down();//go down the hill
+            didPlant = true;
+          }
         }
       }
+      else if (world.isAirBlock(blockpos)) {
+        //at my elevation
+        if (tryPlantHere(world, seeds, blockpos)) {
+          didPlant = true;
+        }
+      }
+      else {
+        //try going up by 1
+        blockpos = blockpos.up();
+        if (world.isAirBlock(blockpos.up())) {
+          if (tryPlantHere(world, seeds, blockpos)) {
+            center = center.up();//go up the hill
+            didPlant = true;
+          }
+        }
+      }
+      if (didPlant) {
+        countPlanted++;
+        seeds.shrink(1);
+      }
     }
+    //loop is complete
     if (player != null && countPlanted > 0) {
       context.getItem().damageItem(countPlanted, player, (p) -> {
         p.sendBreakAnimation(context.getHand());
       });
     }
     return ActionResultType.SUCCESS;
+  }
+
+  private boolean tryPlantHere(World world, ItemStack seeds, BlockPos blockpos) {
+    boolean didPlant = false;
+    if (world.getBlockState(blockpos.down()).getBlock() == Blocks.FARMLAND
+        && world.isAirBlock(blockpos)) {
+      // looks valid. try to plant
+      if (world.setBlockState(blockpos, Block.getBlockFromItem(seeds.getItem()).getDefaultState())) {
+        didPlant = true;
+      }
+    }
+    return didPlant;
   }
 
   private ItemStack getSeed(PlayerEntity player) {
