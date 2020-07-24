@@ -6,9 +6,6 @@ import com.lothrazar.gardentools.block.BlockIrrigation;
 import com.lothrazar.gardentools.block.TileIrrigation;
 import com.lothrazar.gardentools.item.ItemPlanter;
 import com.lothrazar.gardentools.item.ItemTiller;
-import com.lothrazar.gardentools.setup.ClientProxy;
-import com.lothrazar.gardentools.setup.IProxy;
-import com.lothrazar.gardentools.setup.ServerProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
@@ -18,7 +15,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLFingerprintViolationEvent;
@@ -27,14 +23,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.IForgeRegistry;
 
-// TODO: The value here should match an entry in the META-INF/mods.toml file
-// TODO: Also search and replace it in build.gradle
 @Mod(GardenMod.MODID)
 public class GardenMod {
 
   public static final String MODID = "gardentools";
   public static final String certificateFingerprint = "@FINGERPRINT@";
-  public static final IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
   public static final Logger LOGGER = LogManager.getLogger();
   public static ConfigManager config;
 
@@ -91,6 +84,6 @@ public class GardenMod {
     // https://tutorials.darkhax.net/tutorials/jar_signing/
     String source = (event.getSource() == null) ? "" : event.getSource().getName() + " ";
     String msg = MODID + "Invalid fingerprint detected! The file " + source + "may have been tampered with. This version will NOT be supported by the author!";
-    System.out.println(msg);
+    //System.out.println(msg);
   }
 }

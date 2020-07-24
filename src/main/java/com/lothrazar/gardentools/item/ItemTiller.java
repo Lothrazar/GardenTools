@@ -28,14 +28,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ItemTiller extends HoeItem {
 
   public ItemTiller(IItemTier tier, Properties builder) {
-    super(tier, 0.2F, builder);
+    super(tier, -4, 0.0F, builder);
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.applyTextStyle(TextFormatting.GRAY);
+    t.func_240699_a_(TextFormatting.GRAY);
     tooltip.add(t);
   }
 

@@ -123,7 +123,7 @@ public class ItemPlanter extends Item {
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.applyTextStyle(TextFormatting.GRAY);
+    t.func_240699_a_(TextFormatting.GRAY);
     tooltip.add(t);
   }
 }

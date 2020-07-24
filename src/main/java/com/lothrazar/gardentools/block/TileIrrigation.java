@@ -18,7 +18,10 @@ public class TileIrrigation extends TileEntity {
   @Override
   public void onLoad() {
     if (!world.isRemote) {
-      farmlandTicket = FarmlandWaterManager.addAABBTicket(world, new AxisAlignedBB(pos).grow(GardenMod.config.getIrrigationRange()));
+      AxisAlignedBB box = new AxisAlignedBB(pos);
+      box = box.grow(GardenMod.config.getIrrigationRange());
+      //      System.setProperty("forge.debugFarmlandWaterManager", "true");
+      farmlandTicket = FarmlandWaterManager.addAABBTicket(world, box);
       farmlandTicket.validate();
     }
   }
