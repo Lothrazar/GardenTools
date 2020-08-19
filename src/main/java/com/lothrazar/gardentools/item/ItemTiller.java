@@ -35,7 +35,7 @@ public class ItemTiller extends HoeItem {
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.func_240699_a_(TextFormatting.GRAY);
+    t.mergeStyle(TextFormatting.GRAY);
     tooltip.add(t);
   }
 
