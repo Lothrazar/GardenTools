@@ -1,5 +1,5 @@
 {
-  "itemGroup.gardentools": "Ferramentas de Jardim",
+	"itemGroup.gardentools": "Garden Tools",
 	"item.gardentools.cultivator":"Cultivador",
 	"item.gardentools.cultivator.tooltip":"Permite arar a terra à distância e suporte à elevação",
 	"item.gardentools.planter":"Espátula Plantadora",
