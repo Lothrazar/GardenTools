@@ -4,8 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.lothrazar.gardentools.block.BlockIrrigation;
 import com.lothrazar.gardentools.block.TileIrrigation;
+import com.lothrazar.gardentools.item.ItemFertilizer;
 import com.lothrazar.gardentools.item.ItemPlanter;
 import com.lothrazar.gardentools.item.ItemTiller;
+import com.lothrazar.gardentools.item.ItemWatering;
+import com.lothrazar.gardentools.rancher.BlockRancher;
+import com.lothrazar.gardentools.rancher.TileRancher;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
@@ -17,7 +21,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -54,17 +57,20 @@ public class GardenMod {
     @SubscribeEvent
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
       // register a new block here 
-      event.getRegistry().register(new BlockIrrigation(Block.Properties.create(Material.EARTH)).setRegistryName("irrigation_core"));
+      IForgeRegistry<Block> r = event.getRegistry();
+      r.register(new BlockIrrigation(Block.Properties.create(Material.EARTH)).setRegistryName("irrigation_core"));
+      r.register(new BlockRancher(Block.Properties.create(Material.IRON)).setRegistryName("rancher"));
     }
 
     @SubscribeEvent
     public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
       IForgeRegistry<Item> r = event.getRegistry();
-      Item.Properties properties = new Item.Properties().group(GardenRegistry.itemGroup);// tab group
-      r.register(new BlockItem(GardenRegistry.irrigation, properties.maxDamage(0).maxStackSize(64)).setRegistryName("irrigation_core"));
-      r.register(new ItemTiller(ItemTier.GOLD, properties.maxStackSize(1).maxDamage(777)).setRegistryName("cultivator"));
-      properties = new Item.Properties().group(GardenRegistry.itemGroup);
-      r.register(new ItemPlanter(properties.maxStackSize(1).maxDamage(777)).setRegistryName("planter"));
+      r.register(new BlockItem(GardenRegistry.rancher, new Item.Properties().group(GardenRegistry.itemGroup).maxDamage(0).maxStackSize(64)).setRegistryName("rancher"));
+      r.register(new BlockItem(GardenRegistry.irrigation, new Item.Properties().group(GardenRegistry.itemGroup).maxDamage(0).maxStackSize(64)).setRegistryName("irrigation_core"));
+      r.register(new ItemTiller(ItemTier.GOLD, new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1).maxDamage(777)).setRegistryName("cultivator"));
+      r.register(new ItemWatering(new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1).maxDamage(777)).setRegistryName("watering"));
+      r.register(new ItemFertilizer(new Item.Properties().group(GardenRegistry.itemGroup)).setRegistryName("fertilizer"));
+      r.register(new ItemPlanter(new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1).maxDamage(777)).setRegistryName("planter"));
       //JOBS
       // cultivate field
       // water field
@@ -76,14 +82,7 @@ public class GardenMod {
     public static void onTileEntityRegistry(RegistryEvent.Register<TileEntityType<?>> event) {
       IForgeRegistry<TileEntityType<?>> r = event.getRegistry();
       r.register(TileEntityType.Builder.create(TileIrrigation::new, GardenRegistry.irrigation).build(null).setRegistryName("irrigation_core"));
+      r.register(TileEntityType.Builder.create(TileRancher::new, GardenRegistry.rancher).build(null).setRegistryName("rancher"));
     }
-  }
-
-  @SubscribeEvent
-  public static void onFingerprintViolation(FMLFingerprintViolationEvent event) {
-    // https://tutorials.darkhax.net/tutorials/jar_signing/
-    String source = (event.getSource() == null) ? "" : event.getSource().getName() + " ";
-    String msg = MODID + "Invalid fingerprint detected! The file " + source + "may have been tampered with. This version will NOT be supported by the author!";
-    //System.out.println(msg);
   }
 }

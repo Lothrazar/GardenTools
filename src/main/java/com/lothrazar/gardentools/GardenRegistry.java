@@ -1,6 +1,7 @@
 package com.lothrazar.gardentools;
 
 import com.lothrazar.gardentools.block.TileIrrigation;
+import com.lothrazar.gardentools.rancher.TileRancher;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -20,4 +21,8 @@ public class GardenRegistry {
   static Block irrigation;
   @ObjectHolder(GardenMod.MODID + ":irrigation_core")
   public static TileEntityType<TileIrrigation> irrigationTile;
+  @ObjectHolder(GardenMod.MODID + ":rancher")
+  static Block rancher;
+  @ObjectHolder(GardenMod.MODID + ":rancher")
+  public static TileEntityType<TileRancher> rancherTile;
 }
