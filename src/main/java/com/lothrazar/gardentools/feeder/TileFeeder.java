@@ -1,4 +1,4 @@
-package com.lothrazar.gardentools.rancher;
+package com.lothrazar.gardentools.feeder;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -8,10 +8,6 @@ import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.UtilFakePlayer;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -20,13 +16,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 
-public class TileRancher extends TileEntity implements ITickableTileEntity {
+public class TileFeeder extends TileEntity implements ITickableTileEntity {
 
   private WeakReference<FakePlayer> fakePlayer;
   int radius = 8;
 
-  public TileRancher() {
-    super(GardenRegistry.rancherTile);
+  public TileFeeder() {
+    super(GardenRegistry.feederTile);
   }
 
   public WeakReference<FakePlayer> setupBeforeTrigger(ServerWorld sw, String name, UUID uuid) {
@@ -62,44 +58,28 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
       if (entity == null || fakePlayer == null || fakePlayer.get() == null) {
         continue;
       }
-      //miiiiiiiiiiiilk
-      if (entity instanceof CowEntity) {
-        //milk
-        CowEntity cow = (CowEntity) entity;
-        ItemEntity eiBucket = this.findExact(itemEntities, Items.BUCKET);
-        if (eiBucket != null) {
-          boolean doreplace = eiBucket.getItem().getCount() == 1;
-          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, eiBucket.getItem());
-          ActionResultType result = cow.func_230254_b_(fakePlayer.get(), Hand.MAIN_HAND);
+      /*****************************/
+      if (!entity.isChild()) {
+        //no feedin the child
+        ItemEntity eiBreedingItem = this.findBreedingItem(itemEntities, entity);
+        //        fakePlayer.get().setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.WHEAT));
+        if (eiBreedingItem != null) {
+          //ok  feed
+          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, eiBreedingItem.getItem());
+          ActionResultType result = entity.func_230254_b_(fakePlayer.get(), Hand.MAIN_HAND);
+          GardenMod.LOGGER.info("result animal feed " + result);
           if (result == ActionResultType.CONSUME || result == ActionResultType.SUCCESS) {
-            if (doreplace) {
-              GardenMod.LOGGER.info(" copy item into player " + fakePlayer.get().getHeldItemMainhand());
-              eiBucket.setItem(fakePlayer.get().getHeldItemMainhand());
-              //if we dont replace, then drop it
-            }
-            else {
-              GardenMod.LOGGER.info("doreplace is false, drop new milk" + result);
-              eiBucket.setItem(fakePlayer.get().getHeldItemMainhand());
-              cow.entityDropItem(new ItemStack(Items.MILK_BUCKET));
-            }
-            fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            eiBreedingItem.setItem(fakePlayer.get().getHeldItemMainhand());
           }
         }
       }
     }
   }
 
-  /**
-   * find empty bucket
-   * 
-   * @param itemEntities
-   * @param bucket
-   * @return
-   */
-  private ItemEntity findExact(List<ItemEntity> itemEntities, Item bucket) {
+  private ItemEntity findBreedingItem(List<ItemEntity> itemEntities, AnimalEntity entity) {
     for (ItemEntity ei : itemEntities) {
       //alive stack that matches the item
-      if (ei.isAlive() && !ei.getItem().isEmpty() && ei.getItem().getItem() == bucket) {
+      if (ei.isAlive() && entity.isBreedingItem(ei.getItem())) {
         return ei;
       }
     }

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "gardentools:block/feeder"
+        }
+    }
+}
