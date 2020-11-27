@@ -3,7 +3,7 @@
 	"parent": "block/cube_all",
 	"textures": {
 		"stone": "gardentools:block/irrigation_core",
-		"water": "gardentools:block/water_flow",
+		"water": "minecraft:block/podzol_top",
 		"col": "minecraft:block/spruce_log",
 		"particle": "gardentools:block/water_flow"
 	},

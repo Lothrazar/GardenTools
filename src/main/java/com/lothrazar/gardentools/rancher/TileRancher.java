@@ -18,6 +18,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.util.FakePlayer;
 
 public class TileRancher extends TileEntity implements ITickableTileEntity {
@@ -62,6 +63,22 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
       if (entity == null || fakePlayer == null || fakePlayer.get() == null) {
         continue;
       }
+      /*****************************/
+      if (entity instanceof IForgeShearable) {
+        //shear
+        IForgeShearable sheep = (IForgeShearable) entity;
+        if (sheep.isShearable(fakePlayer.get().getHeldItemMainhand(), world, pos)) {
+          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.SHEARS));
+          //
+          List<ItemStack> drops = sheep.onSheared(fakePlayer.get(), fakePlayer.get().getHeldItemMainhand(), world, pos, 1);
+          drops.forEach(d -> {
+            entity.entityDropItem(d, 1.0F);
+            //            ent.setMotion(ent.getMotion().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+          });
+          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+          break;//done, one animal per tick
+        }
+      }
       //miiiiiiiiiiiilk
       if (entity instanceof CowEntity) {
         //milk
@@ -83,6 +100,7 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
               cow.entityDropItem(new ItemStack(Items.MILK_BUCKET));
             }
             fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            break;//done, one animal per tick
           }
         }
       }

@@ -5,5 +5,18 @@
 	"item.gardentools.planter":"Trowel Planter",
 	"item.gardentools.planter.tooltip":"Finds seeds in your inventory and plants a batch",
 	"block.gardentools.irrigation_core":"Irrigation Core",
-	"block.gardentools.irrigation_core.tooltip":"Keeps nearby farmland hydrated"
+	"block.gardentools.irrigation_core.tooltip":"Keeps nearby farmland hydrated",
+	
+	"item.gardentools.watering":"Watering Can",
+	"item.gardentools.watering.tooltip":"Slowly grow nearby crops",
+	
+	"item.gardentools.fertilizer":"Irrigation Core",
+	"item.gardentools.fertilizer.tooltip":"Keeps nearby farmland hydrated",
+	
+	"block.gardentools.feeder":"Livestock Feeder",
+	"block.gardentools.feeder.tooltip":"Uses items on the ground to feed nearby livestock",
+	
+	"block.gardentools.rancher":"Livestock Rancher",
+	"block.gardentools.rancher.tooltip":"Use buckets on the ground on cows, shears sheep"
+	
 }          

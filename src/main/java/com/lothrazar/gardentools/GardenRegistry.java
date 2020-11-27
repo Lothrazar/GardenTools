@@ -3,7 +3,6 @@ package com.lothrazar.gardentools;
 import com.lothrazar.gardentools.block.TileIrrigation;
 import com.lothrazar.gardentools.feeder.TileFeeder;
 import com.lothrazar.gardentools.rancher.TileRancher;
-import com.lothrazar.gardentools.shears.TileShears;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -31,8 +30,4 @@ public class GardenRegistry {
   static Block feeder;
   @ObjectHolder(GardenMod.MODID + ":feeder")
   public static TileEntityType<TileFeeder> feederTile;
-  @ObjectHolder(GardenMod.MODID + ":shearing")
-  static Block shearing;
-  @ObjectHolder(GardenMod.MODID + ":shearing")
-  public static TileEntityType<TileShears> shearingTile;
 }

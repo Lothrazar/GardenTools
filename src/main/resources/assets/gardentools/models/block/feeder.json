@@ -5,7 +5,7 @@
 		"stone": "gardentools:block/irrigation_core",
 		"water": "minecraft:block/hay_block_top",
 		"col": "minecraft:block/spruce_log",
-		"particle": "gardentools:block/water_flow"
+		"particle": "minecraft:block/hay_block_top"
 	},
 	"elements": [
 		{

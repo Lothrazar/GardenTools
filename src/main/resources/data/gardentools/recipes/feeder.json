@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " t ",
+    "twt",
+    " t "
+  ],
+  "key": {
+    "t": {
+      "item": "minecraft:dispenser"
+    },
+    "w": {
+      "item": "gardentools:irrigation_cre"
+    }
+  },
+  "result": {
+    "item": "gardentools:feeder",
+    "count": 1
+  }
+}

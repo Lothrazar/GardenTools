@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " t ",
+    "twt",
+    " t "
+  ],
+  "key": {
+    "t": {
+      "item": "minecraft:bucket"
+    },
+    "w": {
+      "item": "gardentools:irrigation_cre"
+    }
+  },
+  "result": {
+    "item": "gardentools:ranching",
+    "count": 1
+  }
+}
