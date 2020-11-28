@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "bbb",
+    "bsb",
+    "bbb"
+  ],
+  "key": {
+    "b": {    
+      "item": "minecraft:bone_meal"
+    },
+    "s": {
+      "item": "minecraft:dirt"
+    }
+  },
+  "result": {
+    "item": "gardentools:fertilizer",
+    "count": 5
+  }
+}

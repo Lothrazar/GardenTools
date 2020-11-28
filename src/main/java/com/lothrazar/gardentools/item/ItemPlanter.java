@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.CarrotBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -12,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -20,6 +20,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 
 public class ItemPlanter extends Item {
 
@@ -27,6 +28,7 @@ public class ItemPlanter extends Item {
 
   public ItemPlanter(Properties properties) {
     super(properties);
+    CarrotBlock x;
   }
 
   @Override
@@ -107,12 +109,16 @@ public class ItemPlanter extends Item {
     ItemStack seeds = ItemStack.EMPTY;
     for (ItemStack s : player.inventory.mainInventory) {
       if (!s.isEmpty()) {
-        Item item = s.getItem();
-        for (ResourceLocation st : item.getTags()) {
-          if (st.toString().equalsIgnoreCase(FORGE_SEEDS)) {
-            seeds = s;
-            break;
-          }
+        //        Item item = s.getItem();
+        if (s.getItem().isIn(Tags.Items.SEEDS)) {
+          seeds = s;
+          break;
+        }
+        else {
+          //
+          //
+          //LUA
+          //
         }
       }
     }

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " c ",
+    "yby",
+    "yby"
+  ],
+  "key": {
+    "b": {    
+      "item": "minecraft:water_bucket"
+    },
+    "c": {    
+      "item": "minecraft:chain"
+    },
+    "y": {    
+      "item": "minecraft:clay"
+    }
+  },
+  "result": {
+    "item": "gardentools:watering",
+    "count": 1
+  }
+}

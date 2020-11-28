@@ -10,11 +10,11 @@
       "item": "minecraft:bucket"
     },
     "w": {
-      "item": "gardentools:irrigation_cre"
+      "item": "gardentools:irrigation_core"
     }
   },
   "result": {
-    "item": "gardentools:ranching",
+    "item": "gardentools:rancher",
     "count": 1
   }
 }
