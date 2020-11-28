@@ -103,18 +103,17 @@ public class ItemPlanter extends Item {
   }
 
   private ItemStack getSeed(PlayerEntity player) {
-    for (ItemStack s : player.inventory.mainInventory) {
-      if (!s.isEmpty()) {
-        if (s.getItem().isIn(Tags.Items.SEEDS)) {
-          return s;
+    for (ItemStack stack : player.inventory.mainInventory) {
+      if (!stack.isEmpty()) {
+        if (stack.getItem().isIn(Tags.Items.SEEDS)) {
+          return stack;
         }
         else {
-          Block b = Block.getBlockFromItem(s.getItem());
-          if (b instanceof CropsBlock) {
-            //            CropsBlock crop = (CropsBlock) b; 
-            return new ItemStack(s.getItem());
+          Block block = Block.getBlockFromItem(stack.getItem());
+          if (block instanceof CropsBlock) {
+            return stack;
           }
-          //|| b instanceof IPlantable
+          // b instanceof IPlantable
         }
       }
     }
