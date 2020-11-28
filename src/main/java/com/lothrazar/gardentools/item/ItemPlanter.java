@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.CarrotBlock;
+import net.minecraft.block.CropsBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -24,11 +24,8 @@ import net.minecraftforge.common.Tags;
 
 public class ItemPlanter extends Item {
 
-  private static final String FORGE_SEEDS = "forge:seeds";
-
   public ItemPlanter(Properties properties) {
     super(properties);
-    CarrotBlock x;
   }
 
   @Override
@@ -106,23 +103,22 @@ public class ItemPlanter extends Item {
   }
 
   private ItemStack getSeed(PlayerEntity player) {
-    ItemStack seeds = ItemStack.EMPTY;
     for (ItemStack s : player.inventory.mainInventory) {
       if (!s.isEmpty()) {
-        //        Item item = s.getItem();
         if (s.getItem().isIn(Tags.Items.SEEDS)) {
-          seeds = s;
-          break;
+          return s;
         }
         else {
-          //
-          //
-          //LUA
-          //
+          Block b = Block.getBlockFromItem(s.getItem());
+          if (b instanceof CropsBlock) {
+            //            CropsBlock crop = (CropsBlock) b; 
+            return new ItemStack(s.getItem());
+          }
+          //|| b instanceof IPlantable
         }
       }
     }
-    return seeds;
+    return ItemStack.EMPTY;
   }
 
   @Override
