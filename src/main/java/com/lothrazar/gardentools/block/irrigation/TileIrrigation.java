@@ -1,4 +1,4 @@
-package com.lothrazar.gardentools.block;
+package com.lothrazar.gardentools.block.irrigation;
 
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;

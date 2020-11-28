@@ -1,8 +1,9 @@
-package com.lothrazar.gardentools.feeder;
+package com.lothrazar.gardentools.block.feeder;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
+import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.UtilFakePlayer;
@@ -19,7 +20,6 @@ import net.minecraftforge.common.util.FakePlayer;
 public class TileFeeder extends TileEntity implements ITickableTileEntity {
 
   private WeakReference<FakePlayer> fakePlayer;
-  int radius = 8;
 
   public TileFeeder() {
     super(GardenRegistry.feederTile);
@@ -49,6 +49,7 @@ public class TileFeeder extends TileEntity implements ITickableTileEntity {
     int x = pos.getX();
     int y = pos.getY();
     int z = pos.getZ();
+    final int radius = ConfigManager.FEEDER_RANGE.get();
     AxisAlignedBB aabb = (new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1)).grow(radius).expand(0.0D, world.getHeight(), 0.0D);
     //first find items
     List<ItemEntity> itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, aabb);

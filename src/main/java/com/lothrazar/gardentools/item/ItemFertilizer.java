@@ -3,6 +3,7 @@ package com.lothrazar.gardentools.item;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.client.util.ITooltipFlag;
@@ -24,7 +25,6 @@ public class ItemFertilizer extends Item {
 
   public static final int MOIST_FINAL = 7;
   final int dist = 3;
-  final int count = 6;
 
   public ItemFertilizer(Item.Properties builder) {
     super(builder);
@@ -41,6 +41,7 @@ public class ItemFertilizer extends Item {
   @Override
   public ActionResultType onItemUse(ItemUseContext context) {
     World world = context.getWorld();
+    final int count = ConfigManager.FERT_POWER.get();
     for (int i = 0; i < count; i++)
       BoneMealItem.applyBonemeal(context.getItem(), world, context.getPos(), context.getPlayer());
     ///hydrate farmland bonus

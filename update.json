@@ -5,7 +5,7 @@
     "1.16.4-recommended": "1.0.0"
   },
   "1.16.4": {
-    "1.0.0": "Create pt_br.json by  Mikeliro.  Port to 1.16.3 and latest forge RB "
-  	,"1.1.0":"Planter updated to work with 'crop-blocks' such as carrots and potatoes.  New items: Fertilzer, Watering Jug.  New blocks: Livestock Rancher, Livestock Feeder.  "
+    "1.0.0": "Create pt_br.json by  Mikeliro.  Port to 1.16 and latest forge RB "
+  	,"1.1.0":"Update max config values of Irrigation block.  Planter updated to work with 'crop-blocks' such as carrots and potatoes.  New items: Fertilzer, Watering Jug.  New blocks: Livestock Rancher, Livestock Feeder.  "
   }
 }

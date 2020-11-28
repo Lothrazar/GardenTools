@@ -14,6 +14,10 @@ public class ConfigManager {
   private static IntValue IRRIG_RANGE;
   private static IntValue MOISTURE;
   private static IntValue PLANTER_RANGE;
+  public static IntValue WATERING_RANGE;
+  public static IntValue FERT_POWER;
+  public static IntValue FEEDER_RANGE;
+  public static IntValue RANCHER_RANGE;
   static {
     initConfig();
   }
@@ -22,8 +26,17 @@ public class ConfigManager {
     COMMON_BUILDER.comment("General settings").push(GardenMod.MODID);
     TILLING_RANGE = COMMON_BUILDER.comment("Range of cultivator item").defineInRange("cultivator.range", 9, 2, 32);
     PLANTER_RANGE = COMMON_BUILDER.comment("Range of planter item").defineInRange("planter.range", 9, 2, 32);
-    IRRIG_RANGE = COMMON_BUILDER.comment("Watering radius of irrigation block").defineInRange("irrigator.radius", 4, 1, 16);
+    IRRIG_RANGE = COMMON_BUILDER.comment("Watering radius of irrigation block").defineInRange("irrigator.radius", 8, 1, 64);
     MOISTURE = COMMON_BUILDER.comment("Moisture level set by cultivator").defineInRange("cultivator.moisture", 7, 0, 7);
+    //watering range
+    WATERING_RANGE = COMMON_BUILDER.comment("Watering can range").defineInRange("watering.range", 4, 1, 32);
+    //watering percentage
+    //fertilizer count==power
+    FERT_POWER = COMMON_BUILDER.comment("The bonemeal-power of the fertilizer").defineInRange("fertilizer.power", 6, 1, 32);
+    //feeder range
+    FEEDER_RANGE = COMMON_BUILDER.comment("Livestock Feeder range").defineInRange("feeder.range", 8, 1, 32);
+    //rancher range
+    RANCHER_RANGE = COMMON_BUILDER.comment("Livestock Rancher range").defineInRange("rancher.range", 8, 1, 32);
     COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();
   }

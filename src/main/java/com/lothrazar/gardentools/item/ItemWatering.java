@@ -3,6 +3,7 @@ package com.lothrazar.gardentools.item;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
@@ -29,8 +30,6 @@ import net.minecraftforge.common.IPlantable;
 public class ItemWatering extends Item {
 
   private static final double PCT_GROW_IF_LESS = 0.1;
-  //  
-  final int dist = 4;
 
   public ItemWatering(Item.Properties builder) {
     super(builder);
@@ -50,8 +49,9 @@ public class ItemWatering extends Item {
     if (context.getFace() == Direction.DOWN) {
       return ActionResultType.FAIL;
     }
+    final int range = ConfigManager.WATERING_RANGE.get();
     BlockPos pos = context.getPos();
-    Stream<BlockPos> shape = BlockPos.getAllInBox(pos.add(-dist, -dist, -dist), pos.add(dist, dist, dist));
+    Stream<BlockPos> shape = BlockPos.getAllInBox(pos.add(-range, -range, -range), pos.add(range, range, range));
     shape.forEach(posCurrent -> {
       //      first, moisturize farmland just like tiller
       BlockState bs = world.getBlockState(posCurrent);

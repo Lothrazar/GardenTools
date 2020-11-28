@@ -1,8 +1,8 @@
 package com.lothrazar.gardentools;
 
-import com.lothrazar.gardentools.block.TileIrrigation;
-import com.lothrazar.gardentools.feeder.TileFeeder;
-import com.lothrazar.gardentools.rancher.TileRancher;
+import com.lothrazar.gardentools.block.feeder.TileFeeder;
+import com.lothrazar.gardentools.block.irrigation.TileIrrigation;
+import com.lothrazar.gardentools.block.rancher.TileRancher;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;

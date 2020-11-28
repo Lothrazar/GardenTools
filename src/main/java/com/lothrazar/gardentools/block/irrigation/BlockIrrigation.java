@@ -1,4 +1,4 @@
-package com.lothrazar.gardentools.feeder;
+package com.lothrazar.gardentools.block.irrigation;
 
 import java.util.List;
 import javax.annotation.Nullable;
@@ -15,9 +15,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 
-public class BlockFeeder extends Block {
+public class BlockIrrigation extends Block {
 
-  public BlockFeeder(Properties properties) {
+  public BlockIrrigation(Properties properties) {
     super(properties.hardnessAndResistance(1.3F).harvestTool(ToolType.PICKAXE).notSolid());
   }
 
@@ -28,7 +28,7 @@ public class BlockFeeder extends Block {
 
   @Override
   public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    return new TileFeeder();
+    return new TileIrrigation();
   }
 
   @Override
