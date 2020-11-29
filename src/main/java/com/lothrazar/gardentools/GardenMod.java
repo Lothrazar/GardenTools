@@ -2,6 +2,8 @@ package com.lothrazar.gardentools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.lothrazar.gardentools.block.BlockMagnet;
+import com.lothrazar.gardentools.block.TileMagnet;
 import com.lothrazar.gardentools.block.feeder.BlockFeeder;
 import com.lothrazar.gardentools.block.feeder.TileFeeder;
 import com.lothrazar.gardentools.block.irrigation.BlockIrrigation;
@@ -60,9 +62,10 @@ public class GardenMod {
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
       // register a new block here 
       IForgeRegistry<Block> r = event.getRegistry();
-      r.register(new BlockIrrigation(Block.Properties.create(Material.EARTH)).setRegistryName("irrigation_core"));
+      r.register(new BlockIrrigation(Block.Properties.create(Material.ROCK)).setRegistryName("irrigation_core"));
       r.register(new BlockRancher(Block.Properties.create(Material.IRON)).setRegistryName("rancher"));
       r.register(new BlockFeeder(Block.Properties.create(Material.IRON)).setRegistryName("feeder"));
+      r.register(new BlockMagnet(Block.Properties.create(Material.IRON)).setRegistryName("magnet"));
     }
 
     @SubscribeEvent
@@ -72,9 +75,10 @@ public class GardenMod {
       r.register(new BlockItem(GardenRegistry.feeder, new Item.Properties().group(GardenRegistry.itemGroup)).setRegistryName("feeder"));
       r.register(new BlockItem(GardenRegistry.irrigation, new Item.Properties().group(GardenRegistry.itemGroup)).setRegistryName("irrigation_core"));
       r.register(new ItemTiller(ItemTier.GOLD, new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1).maxDamage(777)).setRegistryName("cultivator"));
-      r.register(new ItemWatering(new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1).maxDamage(777)).setRegistryName("watering"));
+      r.register(new ItemWatering(new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1)).setRegistryName("watering"));
       r.register(new ItemFertilizer(new Item.Properties().group(GardenRegistry.itemGroup)).setRegistryName("fertilizer"));
       r.register(new ItemPlanter(new Item.Properties().group(GardenRegistry.itemGroup).maxStackSize(1).maxDamage(777)).setRegistryName("planter"));
+      r.register(new BlockItem(GardenRegistry.magnet, new Item.Properties().group(GardenRegistry.itemGroup)).setRegistryName("magnet"));
     }
 
     @SubscribeEvent
@@ -83,6 +87,7 @@ public class GardenMod {
       r.register(TileEntityType.Builder.create(TileIrrigation::new, GardenRegistry.irrigation).build(null).setRegistryName("irrigation_core"));
       r.register(TileEntityType.Builder.create(TileRancher::new, GardenRegistry.rancher).build(null).setRegistryName("rancher"));
       r.register(TileEntityType.Builder.create(TileFeeder::new, GardenRegistry.feeder).build(null).setRegistryName("feeder"));
+      r.register(TileEntityType.Builder.create(TileMagnet::new, GardenRegistry.magnet).build(null).setRegistryName("magnet"));
     }
   }
 }

@@ -91,12 +91,12 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
           ActionResultType result = cow.func_230254_b_(fakePlayer.get(), Hand.MAIN_HAND);
           if (result == ActionResultType.CONSUME || result == ActionResultType.SUCCESS) {
             if (doreplace) {
-              GardenMod.LOGGER.info(" copy item into player " + fakePlayer.get().getHeldItemMainhand());
+              //              GardenMod.LOGGER.info(" copy item into player " + fakePlayer.get().getHeldItemMainhand());
               eiBucket.setItem(fakePlayer.get().getHeldItemMainhand());
               //if we dont replace, then drop it
             }
             else {
-              GardenMod.LOGGER.info("doreplace is false, drop new milk" + result);
+              //              GardenMod.LOGGER.info("doreplace is false, drop new milk" + result);
               eiBucket.setItem(fakePlayer.get().getHeldItemMainhand());
               cow.entityDropItem(new ItemStack(Items.MILK_BUCKET));
             }

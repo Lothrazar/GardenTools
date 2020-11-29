@@ -13,12 +13,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ToolType;
 
 public class BlockRancher extends Block {
 
   public BlockRancher(Properties properties) {
-    super(properties.hardnessAndResistance(1.3F).harvestTool(ToolType.PICKAXE).notSolid());
+    super(properties.hardnessAndResistance(1.3F));
   }
 
   @Override

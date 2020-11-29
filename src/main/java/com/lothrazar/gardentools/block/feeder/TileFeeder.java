@@ -68,7 +68,7 @@ public class TileFeeder extends TileEntity implements ITickableTileEntity {
           //ok  feed
           fakePlayer.get().setHeldItem(Hand.MAIN_HAND, eiBreedingItem.getItem());
           ActionResultType result = entity.func_230254_b_(fakePlayer.get(), Hand.MAIN_HAND);
-          GardenMod.LOGGER.info("result animal feed " + result);
+          //          GardenMod.LOGGER.info("result animal feed " + result);
           if (result == ActionResultType.CONSUME || result == ActionResultType.SUCCESS) {
             eiBreedingItem.setItem(fakePlayer.get().getHeldItemMainhand());
           }

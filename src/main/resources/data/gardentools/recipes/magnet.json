@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " t ",
+    "twt",
+    " t "
+  ],
+  "key": {
+    "t": {
+      "item": "minecraft:repeater"
+    },
+    "w": {
+      "item": "minecraft:hopper"
+    }
+  },
+  "result": {
+    "item": "gardentools:magnet",
+    "count": 1
+  }
+}

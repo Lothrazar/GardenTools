@@ -10,13 +10,16 @@
 	"item.gardentools.watering":"Watering Can",
 	"item.gardentools.watering.tooltip":"Slowly grow nearby crops",
 	
-	"item.gardentools.fertilizer":"Irrigation Core",
-	"item.gardentools.fertilizer.tooltip":"Keeps nearby farmland hydrated",
+	"item.gardentools.fertilizer":"Fertilizer",
+	"item.gardentools.fertilizer.tooltip":"Concentrated bonemeal",
 	
 	"block.gardentools.feeder":"Livestock Feeder",
-	"block.gardentools.feeder.tooltip":"Uses items on the ground to feed nearby livestock",
+	"block.gardentools.feeder.tooltip":"Feeder uses items laying on the ground",
 	
 	"block.gardentools.rancher":"Livestock Rancher",
-	"block.gardentools.rancher.tooltip":"Use buckets on the ground on cows, shears sheep"
+	"block.gardentools.rancher.tooltip":"Shears sheep; uses buckets laying on the ground",
+	
+	"block.gardentools.magnet":"Standing Magnet",
+	"block.gardentools.magnet.tooltip":"Placing on a container means pulled items will be filtered"
 	
 }          

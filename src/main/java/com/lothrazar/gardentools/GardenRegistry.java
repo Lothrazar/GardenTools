@@ -1,5 +1,6 @@
 package com.lothrazar.gardentools;
 
+import com.lothrazar.gardentools.block.TileMagnet;
 import com.lothrazar.gardentools.block.feeder.TileFeeder;
 import com.lothrazar.gardentools.block.irrigation.TileIrrigation;
 import com.lothrazar.gardentools.block.rancher.TileRancher;
@@ -30,4 +31,8 @@ public class GardenRegistry {
   static Block feeder;
   @ObjectHolder(GardenMod.MODID + ":feeder")
   public static TileEntityType<TileFeeder> feederTile;
+  @ObjectHolder(GardenMod.MODID + ":magnet")
+  public static Block magnet;
+  @ObjectHolder(GardenMod.MODID + ":magnet")
+  public static TileEntityType<TileMagnet> magnetTile;
 }
