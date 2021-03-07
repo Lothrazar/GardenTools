@@ -1,19 +1,30 @@
 package com.lothrazar.gardentools.block;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.lothrazar.gardentools.GardenRegistry;
+
+import net.minecraft.block.HopperBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.VanillaInventoryCodeHooks;
 
 public class TileMagnet extends TileEntity implements ITickableTileEntity {
 
@@ -30,14 +41,14 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
     Set<Item> filter = new HashSet<>();
     if (below != null) {
       IItemHandler hopper = below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
-      for (int i = 0; i < hopper.getSlots(); i++) {
-        ItemStack here = hopper.getStackInSlot(i);
-        if (!here.isEmpty()) {
-          filter.add(here.getItem());
-        }
+      filter.addAll(getItemsInItemHandler(hopper));
+
+      if (below instanceof HopperTileEntity) {
+        HopperTileEntity hopperTileEntity = (HopperTileEntity) below;
+        filter.addAll(getConnectedItemHandlerItems(hopperTileEntity));
       }
     }
-    //
+
     int radius = 16;
     int vradius = 0;
     int x = pos.getX();
@@ -45,10 +56,26 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
     int z = pos.getZ();
     AxisAlignedBB axisalignedbb = (new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1)).grow(radius, vradius, radius);
     List<ItemEntity> list = world.getEntitiesWithinAABB(ItemEntity.class, axisalignedbb);
-    pullEntityList(x + 0.5, y + 0.2, z + 0.5, true, list, filter);
+    pullEntityList(x + 0.2, y + 0.5, z + 0.2, true, list, filter);
   }
 
-  private static final double ENTITY_PULL_DIST = 0.4;//closer than this and nothing happens 
+  private List<Item> getConnectedItemHandlerItems(HopperTileEntity hopper) {
+    Direction hopperFacing = hopper.getBlockState().get(HopperBlock.FACING);
+
+    double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
+    double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
+    double z = hopper.getZPos() + (double) hopperFacing.getZOffset();
+    Optional<Pair<IItemHandler, Object>> itemHandlerPair = VanillaInventoryCodeHooks.getItemHandler(hopper.getWorld(), x, y, z, hopperFacing.getOpposite());
+
+    if (!itemHandlerPair.isPresent()) {
+      return Collections.emptyList();
+    }
+
+    IItemHandler itemHandler = itemHandlerPair.get().getKey();
+    return getItemsInItemHandler(itemHandler);
+  }
+
+  private static final double ENTITY_PULL_DIST = 0.4;//closer than this and nothing happens
   private static final double ENTITY_PULL_SPEED_CUTOFF = 3;//closer than this and it slows down
 
   public static int pullEntityList(double x, double y, double z, boolean towardsPos, List<ItemEntity> all, Set<Item> filter) {
@@ -90,5 +117,17 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
     double motionY = finalVector.y * modifier;
     double motionZ = finalVector.z * modifier;
     entity.setMotion(motionX, motionY, motionZ);
+  }
+
+  private List<Item> getItemsInItemHandler(IItemHandler itemHandler) {
+    List<Item> filter = new ArrayList<>();
+    for (int i = 0; i < itemHandler.getSlots(); i++) {
+      ItemStack stack = itemHandler.getStackInSlot(i);
+      if (!stack.isEmpty()) {
+        filter.add(stack.getItem());
+      }
+    }
+
+    return filter;
   }
 }
