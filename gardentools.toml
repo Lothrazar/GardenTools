@@ -38,6 +38,9 @@
 
 	[gardentools.irrigator]
 		#
+		#Is this a water source for buckets and capabilities
+		water_source = true
+		#
 		#Watering radius of irrigation block
 		#Range: 1 ~ 64
 		radius = 8
@@ -45,8 +48,8 @@
 	[gardentools.magnet]
 		#
 		#Magnet max range
-		#Range: 16 ~ 256
-		range = 1
+		#Range: 1 ~ 256
+		range = 16
 
 		[gardentools.magnet.speed]
 			#

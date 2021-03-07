@@ -111,7 +111,7 @@ dependencies {
     
 
   //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3163007")
-  //  implementation fg.deobf("curse.maven:cyclic-239286:3188762")
+    implementation fg.deobf("curse.maven:cyclic-239286:3188762")
   //  implementation fg.deobf("curse.maven:ctm-267602:3137659")
   //  implementation fg.deobf("curse.maven:storage-drawers-223852:3180569")
   //  implementation fg.deobf("curse.maven:refined-storage-243076:3157354")
@@ -180,14 +180,14 @@ task signJar(type: SignJar, dependsOn: jar) {
     outputFile = jar.archivePath
 }
 
-build.dependsOn signJar
+// build.dependsOn signJar
 
 task copyJar(type: Copy) {
     from jar
     into "${dist_folder}"
 }
 
-build.finalizedBy copyJar
+// build.finalizedBy copyJar
 
 cleanJar {
   delete 'build/libs'
