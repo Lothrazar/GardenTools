@@ -1,8 +1,8 @@
 package com.lothrazar.gardentools.item;
 
+import com.lothrazar.gardentools.GardenMod;
 import java.util.List;
 import javax.annotation.Nullable;
-import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
@@ -38,12 +38,13 @@ public class ItemPlanter extends Item {
     BlockPos center = context.getPos().up();
     BlockPos blockpos = null;
     int countPlanted = 0;
-    for (int dist = 0; dist < GardenMod.config.getPlantingRange(); dist++) {
+    for (int dist = 0; dist < GardenMod.CONFIG.getPlantingRange(); dist++) {
       //get seed ready if any are left
       if (seeds.isEmpty()) {
         seeds = getSeed(player);
         if (seeds.isEmpty()) {
-          break;//for sure done
+          break;
+          //for sure done
         }
       }
       //advance position
@@ -55,7 +56,8 @@ public class ItemPlanter extends Item {
         blockpos = blockpos.down();
         if (world.isAirBlock(blockpos)) {
           if (tryPlantHere(world, seeds, blockpos)) {
-            center = center.down();//go down the hill
+            center = center.down();
+            //go down the hill
             didPlant = true;
           }
         }
@@ -71,7 +73,8 @@ public class ItemPlanter extends Item {
         blockpos = blockpos.up();
         if (world.isAirBlock(blockpos.up())) {
           if (tryPlantHere(world, seeds, blockpos)) {
-            center = center.up();//go up the hill
+            center = center.up();
+            //go up the hill
             didPlant = true;
           }
         }

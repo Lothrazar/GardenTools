@@ -12,6 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'checkstyle'
 
 import net.minecraftforge.gradle.common.task.SignJar
 import groovy.json.JsonSlurper
@@ -22,6 +23,14 @@ group = 'com.lothrazar.gardentools' // http://maven.apache.org/guides/mini/guide
 archivesBaseName = 'gardentools'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+checkstyle {
+    toolVersion '8.23'
+    config project.resources.text.fromUri("https://raw.githubusercontent.com/Lothrazar/Cyclic/trunk/1.16/checkstyle.xml")
+}
+checkstyleMain {
+    source ='src/main/java'
+}
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -97,10 +106,18 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-
-    compile fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+ 
+    compile fg.deobf("mezz.jei:${jei_version}")
     
 
+  //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3163007")
+  //  implementation fg.deobf("curse.maven:cyclic-239286:3188762")
+  //  implementation fg.deobf("curse.maven:ctm-267602:3137659")
+  //  implementation fg.deobf("curse.maven:storage-drawers-223852:3180569")
+  //  implementation fg.deobf("curse.maven:refined-storage-243076:3157354")
+  //  implementation fg.deobf("curse.maven:cucumber-272335:3187116")
+  //  implementation fg.deobf("curse.maven:mystical-agriculture-246640:3152061")
+    
 }
 repositories {
   maven {
@@ -113,6 +130,7 @@ repositories {
     name = "ModMaven"
     url = "https://modmaven.k-4u.nl"
   }
+  maven { url = 'https://www.cursemaven.com'  }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

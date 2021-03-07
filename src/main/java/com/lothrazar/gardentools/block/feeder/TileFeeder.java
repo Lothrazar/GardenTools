@@ -1,12 +1,12 @@
 package com.lothrazar.gardentools.block.feeder;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
 import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.UtilFakePlayer;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -22,7 +22,7 @@ public class TileFeeder extends TileEntity implements ITickableTileEntity {
   private WeakReference<FakePlayer> fakePlayer;
 
   public TileFeeder() {
-    super(GardenRegistry.feederTile);
+    super(GardenRegistry.FEEDERTILE);
   }
 
   public WeakReference<FakePlayer> setupBeforeTrigger(ServerWorld sw, String name, UUID uuid) {
@@ -32,7 +32,8 @@ public class TileFeeder extends TileEntity implements ITickableTileEntity {
       return null;
     }
     //fake player facing the same direction as tile. for throwables
-    fakePlayer.get().setPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());//seems to help interact() mob drops like milk
+    fakePlayer.get().setPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
+    //seems to help interact() mob drops like milk
     //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
   }

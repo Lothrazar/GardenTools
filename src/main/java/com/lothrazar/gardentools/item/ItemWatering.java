@@ -1,9 +1,9 @@
 package com.lothrazar.gardentools.item;
 
+import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
@@ -71,8 +71,9 @@ public class ItemWatering extends Item {
         //a chance on each block
         if (world.rand.nextDouble() < PCT_GROW_IF_LESS) {
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
-          if (world instanceof ServerWorld)
+          if (world instanceof ServerWorld) {
             bs.randomTick((ServerWorld) world, posCurrent, random);
+          }
           //          world.notifyBlockUpdate(posCurrent, state, state, 3);
         }
       }

@@ -1,8 +1,8 @@
 package com.lothrazar.gardentools.item;
 
+import com.lothrazar.gardentools.GardenMod;
 import java.util.List;
 import javax.annotation.Nullable;
-import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -41,24 +41,23 @@ public class ItemTiller extends HoeItem {
 
   @Override
   public ActionResultType onItemUse(ItemUseContext context) {
-    //    ActionResultType succ = super.onItemUse(context);
     if (context.getFace() == Direction.DOWN) {
       return ActionResultType.FAIL;
     }
     //so we got a success from the initial block
     World world = context.getWorld();
     BlockPos center = context.getPos();
-    //    context.getPlayer().getHorizontalFacing()
     Direction face = context.getPlacementHorizontalFacing();
     BlockPos blockpos = null;
-    for (int dist = 0; dist < GardenMod.config.getTillingRange(); dist++) {
+    for (int dist = 0; dist < GardenMod.CONFIG.getTillingRange(); dist++) {
       blockpos = center.offset(face, dist);
       if (world.isAirBlock(blockpos)) {
         //air here, went off an edge. try to go down 1
         blockpos = blockpos.down();
         if (world.isAirBlock(blockpos.up())) {
           if (hoeBlock(context, blockpos)) {
-            center = center.down();//go down the hill
+            center = center.down();
+            //go down the hill
           }
         }
       }
@@ -71,7 +70,8 @@ public class ItemTiller extends HoeItem {
         blockpos = blockpos.up();
         if (world.isAirBlock(blockpos.up())) {
           if (hoeBlock(context, blockpos)) {
-            center = center.up();//go up the hill
+            center = center.up();
+            //go up the hill
           }
         }
       }
@@ -101,11 +101,12 @@ public class ItemTiller extends HoeItem {
 
   private BlockState moisturize(BlockState blockstate) {
     try {
-      if (blockstate.getBlock() == Blocks.FARMLAND && GardenMod.config.getMoisture() > 0)
-        blockstate = blockstate.with(FarmlandBlock.MOISTURE, GardenMod.config.getMoisture());
+      if (blockstate.getBlock() == Blocks.FARMLAND && GardenMod.CONFIG.getMoisture() > 0) {
+        blockstate = blockstate.with(FarmlandBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
+      }
     }
     catch (Exception e) {
-      System.out.println(e.getLocalizedMessage());
+      GardenMod.LOGGER.error("ItemTiller Moisturize error", e);
     }
     return blockstate;
   }

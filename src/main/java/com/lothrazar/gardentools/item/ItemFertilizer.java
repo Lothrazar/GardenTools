@@ -1,9 +1,9 @@
 package com.lothrazar.gardentools.item;
 
+import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.client.util.ITooltipFlag;
@@ -42,8 +42,9 @@ public class ItemFertilizer extends Item {
   public ActionResultType onItemUse(ItemUseContext context) {
     World world = context.getWorld();
     final int count = ConfigManager.FERT_POWER.get();
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++) {
       BoneMealItem.applyBonemeal(context.getItem(), world, context.getPos(), context.getPlayer());
+    }
     ///hydrate farmland bonus
     BlockPos pos = context.getPos().down();
     Stream<BlockPos> shape = BlockPos.getAllInBox(pos.add(-dist, -dist, -dist), pos.add(dist, dist, dist));

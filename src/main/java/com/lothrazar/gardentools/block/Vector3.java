@@ -39,8 +39,9 @@ public class Vector3 {
 
   public Vector3 normalize() {
     double d = mag();
-    if (d != 0)
+    if (d != 0) {
       multiply(1 / d);
+    }
     return this;
   }
 

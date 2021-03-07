@@ -1,4 +1,4 @@
-package com.lothrazar.gardentools.block;
+package com.lothrazar.gardentools.block.magnet;
 
 import java.util.List;
 import javax.annotation.Nullable;

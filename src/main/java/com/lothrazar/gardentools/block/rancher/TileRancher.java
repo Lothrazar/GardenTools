@@ -1,12 +1,12 @@
 package com.lothrazar.gardentools.block.rancher;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
 import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.UtilFakePlayer;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.CowEntity;
@@ -27,7 +27,7 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
   private WeakReference<FakePlayer> fakePlayer;
 
   public TileRancher() {
-    super(GardenRegistry.rancherTile);
+    super(GardenRegistry.RANCHERTILE);
   }
 
   public WeakReference<FakePlayer> setupBeforeTrigger(ServerWorld sw, String name, UUID uuid) {
@@ -37,7 +37,8 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
       return null;
     }
     //fake player facing the same direction as tile. for throwables
-    fakePlayer.get().setPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());//seems to help interact() mob drops like milk
+    fakePlayer.get().setPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
+    //seems to help interact() mob drops like milk
     //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
   }
@@ -74,10 +75,10 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
           List<ItemStack> drops = sheep.onSheared(fakePlayer.get(), fakePlayer.get().getHeldItemMainhand(), world, pos, 1);
           drops.forEach(d -> {
             entity.entityDropItem(d, 1.0F);
-            //            ent.setMotion(ent.getMotion().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
           });
           fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-          break;//done, one animal per tick
+          break;
+          //done, one animal per tick
         }
       }
       //miiiiiiiiiiiilk
@@ -101,7 +102,8 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
               cow.entityDropItem(new ItemStack(Items.MILK_BUCKET));
             }
             fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-            break;//done, one animal per tick
+            break;
+            //done, one animal per tick
           }
         }
       }
