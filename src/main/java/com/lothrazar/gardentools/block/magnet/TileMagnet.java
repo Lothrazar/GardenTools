@@ -43,10 +43,12 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
     Set<Item> filter = new HashSet<>();
     if (below != null) {
       IItemHandler hopper = below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
-      filter.addAll(getItemsInItemHandler(hopper));
-      if (below instanceof HopperTileEntity) {
-        HopperTileEntity hopperTileEntity = (HopperTileEntity) below;
-        filter.addAll(getConnectedItemHandlerItems(hopperTileEntity));
+      if (hopper != null) {
+        filter.addAll(getItemsInItemHandler(hopper));
+        if (below instanceof HopperTileEntity) {
+          HopperTileEntity hopperTileEntity = (HopperTileEntity) below;
+          filter.addAll(getConnectedItemHandlerItems(hopperTileEntity));
+        }
       }
     }
     final int radius = ConfigManager.MAGNET_RANGE.get();
@@ -121,6 +123,9 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
 
   private List<Item> getItemsInItemHandler(IItemHandler itemHandler) {
     List<Item> filter = new ArrayList<>();
+    if (itemHandler == null) {
+      return filter;
+    }
     for (int i = 0; i < itemHandler.getSlots(); i++) {
       ItemStack stack = itemHandler.getStackInSlot(i);
       if (!stack.isEmpty()) {

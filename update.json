@@ -1,12 +1,13 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/gardening-tools",
   "promos": {
-    "1.16.5-latest": "1.1.1",
-    "1.16.5-recommended": "1.1.1"
+    "1.16.5-latest": "1.1.2",
+    "1.16.5-recommended": "1.1.2"
   },
   "1.16.5": {
     "1.0.0": "Create pt_br.json by  Mikeliro.  Port to 1.16 and latest forge RB "
   	,"1.1.0":"Update max config values of Irrigation block.  Planter updated to work with 'crop-blocks' such as carrots and potatoes.  New items: Fertilzer, Watering Jug.  New blocks: Standing Magnet, Livestock Rancher, Livestock Feeder.  "
 		,"1.1.1":"Configs added for Magnet. PR by  jarrydlee : Check hopper attached chest for items to pull closer.  New feature water_source = true in config means the irrigation block is an infinite water source for buckets and cables."
+		,"1.1.2":"Fix NullPointerException in Magnet block. "
   }
 }
