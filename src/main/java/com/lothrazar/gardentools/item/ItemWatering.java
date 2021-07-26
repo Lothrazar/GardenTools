@@ -4,25 +4,25 @@ import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.block.IGrowable;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.Property;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
@@ -37,28 +37,28 @@ public class ItemWatering extends Item {
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.mergeStyle(TextFormatting.GRAY);
+  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }
 
   @Override
-  public ActionResultType onItemUse(ItemUseContext context) {
-    World world = context.getWorld();
-    if (context.getFace() == Direction.DOWN) {
-      return ActionResultType.FAIL;
+  public InteractionResult useOn(UseOnContext context) {
+    Level world = context.getLevel();
+    if (context.getClickedFace() == Direction.DOWN) {
+      return InteractionResult.FAIL;
     }
     final int range = ConfigManager.WATERING_RANGE.get();
-    BlockPos pos = context.getPos();
-    Stream<BlockPos> shape = BlockPos.getAllInBox(pos.add(-range, -range, -range), pos.add(range, range, range));
+    BlockPos pos = context.getClickedPos();
+    Stream<BlockPos> shape = BlockPos.betweenClosedStream(pos.offset(-range, -range, -range), pos.offset(range, range, range));
     shape.forEach(posCurrent -> {
       //      first, moisturize farmland just like tiller
       BlockState bs = world.getBlockState(posCurrent);
-      if (bs.hasProperty(FarmlandBlock.MOISTURE)) {
-        int moisture = bs.get(FarmlandBlock.MOISTURE);
+      if (bs.hasProperty(FarmBlock.MOISTURE)) {
+        int moisture = bs.getValue(FarmBlock.MOISTURE);
         if (moisture < ItemFertilizer.MOIST_FINAL) {
-          world.setBlockState(posCurrent, bs.with(FarmlandBlock.MOISTURE, ItemFertilizer.MOIST_FINAL), 3);
+          world.setBlock(posCurrent, bs.setValue(FarmBlock.MOISTURE, ItemFertilizer.MOIST_FINAL), 3);
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
         }
       }
@@ -66,19 +66,19 @@ public class ItemWatering extends Item {
       //encourage growth with ticks, without direct bonemeal shortcut 
       Block plantBlock = bs.getBlock();
       if (this.hasAgeProperty(bs) ||
-          plantBlock instanceof IGrowable ||
+          plantBlock instanceof BonemealableBlock ||
           plantBlock instanceof IPlantable) {
         //a chance on each block
-        if (world.rand.nextDouble() < PCT_GROW_IF_LESS) {
+        if (world.random.nextDouble() < PCT_GROW_IF_LESS) {
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
-          if (world instanceof ServerWorld) {
-            bs.randomTick((ServerWorld) world, posCurrent, random);
+          if (world instanceof ServerLevel) {
+            bs.randomTick((ServerLevel) world, posCurrent, random);
           }
           //          world.notifyBlockUpdate(posCurrent, state, state, 3);
         }
       }
     });
-    return ActionResultType.SUCCESS;
+    return InteractionResult.SUCCESS;
   }
 
   //different plants have different age ranges, such as 3 for cocoa, or 7 for wheat, like BlockStateProperties.AGE_0_5;

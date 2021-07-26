@@ -3,11 +3,11 @@ package com.lothrazar.gardentools.block.irrigation;
 import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.ticket.AABBTicket;
@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class TileIrrigation extends TileEntity implements ITickableTileEntity {
+public class TileIrrigation extends BlockEntity implements TickableBlockEntity {
 
   private AABBTicket farmlandTicket;
   FluidTank tank;
@@ -45,18 +45,18 @@ public class TileIrrigation extends TileEntity implements ITickableTileEntity {
 
   @Override
   public void onLoad() {
-    if (!world.isRemote) {
-      AxisAlignedBB box = new AxisAlignedBB(pos);
-      box = box.grow(GardenMod.CONFIG.getIrrigationRange());
+    if (!level.isClientSide) {
+      AABB box = new AABB(worldPosition);
+      box = box.inflate(GardenMod.CONFIG.getIrrigationRange());
       //      System.setProperty("forge.debugFarmlandWaterManager", "true");
-      farmlandTicket = FarmlandWaterManager.addAABBTicket(world, box);
+      farmlandTicket = FarmlandWaterManager.addAABBTicket(level, box);
       farmlandTicket.validate();
     }
   }
 
   @Override
   public void onChunkUnloaded() {
-    if (!world.isRemote && farmlandTicket != null) {
+    if (!level.isClientSide && farmlandTicket != null) {
       farmlandTicket.invalidate();
     }
   }

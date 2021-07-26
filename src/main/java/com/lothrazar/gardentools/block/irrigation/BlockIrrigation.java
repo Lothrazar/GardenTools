@@ -3,36 +3,38 @@ package com.lothrazar.gardentools.block.irrigation;
 import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPlaySoundEffectPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class BlockIrrigation extends Block {
 
   public BlockIrrigation(Properties properties) {
-    super(properties.hardnessAndResistance(1.3F).notSolid());
+    super(properties.strength(1.3F).noOcclusion());
   }
 
   @Override
@@ -41,52 +43,52 @@ public class BlockIrrigation extends Block {
   }
 
   @Override
-  public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
     return new TileIrrigation();
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.mergeStyle(TextFormatting.GRAY);
+  public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }
 
   @SuppressWarnings("deprecation")
   @Override
-  public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+  public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
     if (ConfigManager.WATERSRC.get()) {
-      if (!world.isRemote) {
-        TileEntity tankHere = world.getTileEntity(pos);
+      if (!world.isClientSide) {
+        BlockEntity tankHere = world.getBlockEntity(pos);
         if (tankHere != null) {
-          IFluidHandler handler = tankHere.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).orElse(null);
+          IFluidHandler handler = tankHere.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection()).orElse(null);
           if (handler != null) {
             if (FluidUtil.interactWithFluidHandler(player, hand, handler)) {
               //success so display new amount
               //and also play the fluid sound
-              if (player instanceof ServerPlayerEntity) {
-                playSoundFromServer((ServerPlayerEntity) player, SoundEvents.ITEM_BUCKET_FILL);
+              if (player instanceof ServerPlayer) {
+                playSoundFromServer((ServerPlayer) player, SoundEvents.BUCKET_FILL);
               }
             }
           }
         }
       }
-      if (FluidUtil.getFluidHandler(player.getHeldItem(hand)).isPresent()) {
-        return ActionResultType.SUCCESS;
+      if (FluidUtil.getFluidHandler(player.getItemInHand(hand)).isPresent()) {
+        return InteractionResult.SUCCESS;
       }
     }
-    return super.onBlockActivated(state, world, pos, player, hand, hit);
+    return super.use(state, world, pos, player, hand, hit);
   }
 
-  public static void playSoundFromServer(ServerPlayerEntity entityIn, SoundEvent soundIn) {
+  public static void playSoundFromServer(ServerPlayer entityIn, SoundEvent soundIn) {
     if (soundIn == null || entityIn == null) {
       return;
     }
-    entityIn.connection.sendPacket(new SPlaySoundEffectPacket(
+    entityIn.connection.send(new ClientboundSoundPacket(
         soundIn,
-        SoundCategory.BLOCKS,
-        entityIn.lastTickPosX, entityIn.lastTickPosY, entityIn.lastTickPosZ,
+        SoundSource.BLOCKS,
+        entityIn.xOld, entityIn.yOld, entityIn.zOld,
         1.0f, 1.0f));
   }
 }

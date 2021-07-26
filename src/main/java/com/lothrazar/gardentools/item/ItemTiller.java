@@ -3,94 +3,96 @@ package com.lothrazar.gardentools.item;
 import com.lothrazar.gardentools.GardenMod;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class ItemTiller extends HoeItem {
 
-  public ItemTiller(IItemTier tier, Properties builder) {
+  public ItemTiller(Tier tier, Properties builder) {
     super(tier, -4, 0.0F, builder);
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.mergeStyle(TextFormatting.GRAY);
+  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }
 
   @Override
-  public ActionResultType onItemUse(ItemUseContext context) {
-    if (context.getFace() == Direction.DOWN) {
-      return ActionResultType.FAIL;
+  public InteractionResult useOn(UseOnContext context) {
+    if (context.getClickedFace() == Direction.DOWN) {
+      return InteractionResult.FAIL;
     }
     //so we got a success from the initial block
-    World world = context.getWorld();
-    BlockPos center = context.getPos();
-    Direction face = context.getPlacementHorizontalFacing();
+    Level world = context.getLevel();
+    BlockPos center = context.getClickedPos();
+    Direction face = context.getHorizontalDirection();
     BlockPos blockpos = null;
     for (int dist = 0; dist < GardenMod.CONFIG.getTillingRange(); dist++) {
-      blockpos = center.offset(face, dist);
-      if (world.isAirBlock(blockpos)) {
+      blockpos = center.relative(face, dist);
+      if (world.isEmptyBlock(blockpos)) {
         //air here, went off an edge. try to go down 1
-        blockpos = blockpos.down();
-        if (world.isAirBlock(blockpos.up())) {
+        blockpos = blockpos.below();
+        if (world.isEmptyBlock(blockpos.above())) {
           if (hoeBlock(context, blockpos)) {
-            center = center.down();
+            center = center.below();
             //go down the hill
           }
         }
       }
-      else if (world.isAirBlock(blockpos.up())) {
+      else if (world.isEmptyBlock(blockpos.above())) {
         //at my elevation
         hoeBlock(context, blockpos);
       }
       else {
         //try going up by 1
-        blockpos = blockpos.up();
-        if (world.isAirBlock(blockpos.up())) {
+        blockpos = blockpos.above();
+        if (world.isEmptyBlock(blockpos.above())) {
           if (hoeBlock(context, blockpos)) {
-            center = center.up();
+            center = center.above();
             //go up the hill
           }
         }
       }
     }
-    return ActionResultType.SUCCESS;
+    return InteractionResult.SUCCESS;
   }
 
-  private boolean hoeBlock(ItemUseContext context, BlockPos blockpos) {
-    World world = context.getWorld();
+  private boolean hoeBlock(UseOnContext context, BlockPos blockpos) {
+    Level world = context.getLevel();
     Block blockHere = world.getBlockState(blockpos).getBlock();
-    BlockState blockstate = HOE_LOOKUP.get(blockHere);
+    BlockState blockstate = TILLABLES.get(blockHere);
     if (blockstate != null) {
       blockstate = this.moisturize(blockstate);
-      if (world.setBlockState(blockpos, blockstate, 11)) {
-        PlayerEntity playerentity = context.getPlayer();
-        world.playSound(playerentity, blockpos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+      if (world.setBlock(blockpos, blockstate, 11)) {
+        Player playerentity = context.getPlayer();
+        world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
         if (playerentity != null) {
-          context.getItem().damageItem(1, playerentity, (p) -> {
-            p.sendBreakAnimation(context.getHand());
+          context.getItemInHand().hurtAndBreak(1, playerentity, (p) -> {
+            p.broadcastBreakEvent(context.getHand());
           });
         }
         return true;
@@ -102,7 +104,7 @@ public class ItemTiller extends HoeItem {
   private BlockState moisturize(BlockState blockstate) {
     try {
       if (blockstate.getBlock() == Blocks.FARMLAND && GardenMod.CONFIG.getMoisture() > 0) {
-        blockstate = blockstate.with(FarmlandBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
+        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
       }
     }
     catch (Exception e) {

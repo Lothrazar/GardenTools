@@ -7,22 +7,22 @@ import com.lothrazar.gardentools.UtilFakePlayer;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.util.FakePlayer;
 
-public class TileRancher extends TileEntity implements ITickableTileEntity {
+public class TileRancher extends BlockEntity implements TickableBlockEntity {
 
   private WeakReference<FakePlayer> fakePlayer;
 
@@ -30,14 +30,14 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
     super(GardenRegistry.RANCHERTILE);
   }
 
-  public WeakReference<FakePlayer> setupBeforeTrigger(ServerWorld sw, String name, UUID uuid) {
+  public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid) {
     WeakReference<FakePlayer> fakePlayer = UtilFakePlayer.initFakePlayer(sw, uuid, name);
     if (fakePlayer == null) {
       GardenMod.LOGGER.error("Fake player failed to init " + name + " " + uuid);
       return null;
     }
     //fake player facing the same direction as tile. for throwables
-    fakePlayer.get().setPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
+    fakePlayer.get().setPos(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ());
     //seems to help interact() mob drops like milk
     //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
@@ -45,23 +45,23 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
 
   @Override
   public void tick() {
-    if (world.isRemote || world.getGameTime() % 20 != 0) {
+    if (level.isClientSide || level.getGameTime() % 20 != 0) {
       return;
     }
     //only fire every 20 ticks
-    if ((world instanceof ServerWorld) && fakePlayer == null) {
-      fakePlayer = setupBeforeTrigger((ServerWorld) world, "rancher", UUID.randomUUID());
+    if ((level instanceof ServerLevel) && fakePlayer == null) {
+      fakePlayer = setupBeforeTrigger((ServerLevel) level, "rancher", UUID.randomUUID());
     }
-    int x = pos.getX();
-    int y = pos.getY();
-    int z = pos.getZ();
+    int x = worldPosition.getX();
+    int y = worldPosition.getY();
+    int z = worldPosition.getZ();
     final int radius = ConfigManager.RANCHER_RANGE.get();
-    AxisAlignedBB aabb = (new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1)).grow(radius).expand(0.0D, world.getHeight(), 0.0D);
+    AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
     //first find items
-    List<ItemEntity> itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, aabb);
+    List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, aabb);
     //find entities
-    List<AnimalEntity> list = world.getEntitiesWithinAABB(AnimalEntity.class, aabb);
-    for (AnimalEntity entity : list) {
+    List<Animal> list = level.getEntitiesOfClass(Animal.class, aabb);
+    for (Animal entity : list) {
       if (entity == null || fakePlayer == null || fakePlayer.get() == null) {
         continue;
       }
@@ -69,39 +69,39 @@ public class TileRancher extends TileEntity implements ITickableTileEntity {
       if (entity instanceof IForgeShearable) {
         //shear
         IForgeShearable sheep = (IForgeShearable) entity;
-        if (sheep.isShearable(fakePlayer.get().getHeldItemMainhand(), world, pos)) {
-          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.SHEARS));
+        if (sheep.isShearable(fakePlayer.get().getMainHandItem(), level, worldPosition)) {
+          fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
           //
-          List<ItemStack> drops = sheep.onSheared(fakePlayer.get(), fakePlayer.get().getHeldItemMainhand(), world, pos, 1);
+          List<ItemStack> drops = sheep.onSheared(fakePlayer.get(), fakePlayer.get().getMainHandItem(), level, worldPosition, 1);
           drops.forEach(d -> {
-            entity.entityDropItem(d, 1.0F);
+            entity.spawnAtLocation(d, 1.0F);
           });
-          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+          fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
           break;
           //done, one animal per tick
         }
       }
       //miiiiiiiiiiiilk
-      if (entity instanceof CowEntity) {
+      if (entity instanceof Cow) {
         //milk
-        CowEntity cow = (CowEntity) entity;
+        Cow cow = (Cow) entity;
         ItemEntity eiBucket = this.findExact(itemEntities, Items.BUCKET);
         if (eiBucket != null) {
           boolean doreplace = eiBucket.getItem().getCount() == 1;
-          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, eiBucket.getItem());
-          ActionResultType result = cow.func_230254_b_(fakePlayer.get(), Hand.MAIN_HAND);
-          if (result == ActionResultType.CONSUME || result == ActionResultType.SUCCESS) {
+          fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, eiBucket.getItem());
+          InteractionResult result = cow.mobInteract(fakePlayer.get(), InteractionHand.MAIN_HAND);
+          if (result == InteractionResult.CONSUME || result == InteractionResult.SUCCESS) {
             if (doreplace) {
               //              GardenMod.LOGGER.info(" copy item into player " + fakePlayer.get().getHeldItemMainhand());
-              eiBucket.setItem(fakePlayer.get().getHeldItemMainhand());
+              eiBucket.setItem(fakePlayer.get().getMainHandItem());
               //if we dont replace, then drop it
             }
             else {
               //              GardenMod.LOGGER.info("doreplace is false, drop new milk" + result);
-              eiBucket.setItem(fakePlayer.get().getHeldItemMainhand());
-              cow.entityDropItem(new ItemStack(Items.MILK_BUCKET));
+              eiBucket.setItem(fakePlayer.get().getMainHandItem());
+              cow.spawnAtLocation(new ItemStack(Items.MILK_BUCKET));
             }
-            fakePlayer.get().setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             break;
             //done, one animal per tick
           }

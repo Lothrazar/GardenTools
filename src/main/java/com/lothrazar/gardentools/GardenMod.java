@@ -12,12 +12,12 @@ import com.lothrazar.gardentools.item.ItemFertilizer;
 import com.lothrazar.gardentools.item.ItemPlanter;
 import com.lothrazar.gardentools.item.ItemTiller;
 import com.lothrazar.gardentools.item.ItemWatering;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemTier;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -62,32 +62,32 @@ public class GardenMod {
     public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
       // register a new block here 
       IForgeRegistry<Block> r = event.getRegistry();
-      r.register(new BlockIrrigation(Block.Properties.create(Material.ROCK)).setRegistryName("irrigation_core"));
-      r.register(new BlockRancher(Block.Properties.create(Material.IRON)).setRegistryName("rancher"));
-      r.register(new BlockFeeder(Block.Properties.create(Material.IRON)).setRegistryName("feeder"));
-      r.register(new BlockMagnet(Block.Properties.create(Material.IRON)).setRegistryName("magnet"));
+      r.register(new BlockIrrigation(Block.Properties.of(Material.STONE)).setRegistryName("irrigation_core"));
+      r.register(new BlockRancher(Block.Properties.of(Material.METAL)).setRegistryName("rancher"));
+      r.register(new BlockFeeder(Block.Properties.of(Material.METAL)).setRegistryName("feeder"));
+      r.register(new BlockMagnet(Block.Properties.of(Material.METAL)).setRegistryName("magnet"));
     }
 
     @SubscribeEvent
     public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
       IForgeRegistry<Item> r = event.getRegistry();
-      r.register(new BlockItem(GardenRegistry.RANCHER, new Item.Properties().group(GardenRegistry.TAB)).setRegistryName("rancher"));
-      r.register(new BlockItem(GardenRegistry.FEEDER, new Item.Properties().group(GardenRegistry.TAB)).setRegistryName("feeder"));
-      r.register(new BlockItem(GardenRegistry.IRRIGATION, new Item.Properties().group(GardenRegistry.TAB)).setRegistryName("irrigation_core"));
-      r.register(new ItemTiller(ItemTier.GOLD, new Item.Properties().group(GardenRegistry.TAB).maxStackSize(1).maxDamage(777)).setRegistryName("cultivator"));
-      r.register(new ItemWatering(new Item.Properties().group(GardenRegistry.TAB).maxStackSize(1)).setRegistryName("watering"));
-      r.register(new ItemFertilizer(new Item.Properties().group(GardenRegistry.TAB)).setRegistryName("fertilizer"));
-      r.register(new ItemPlanter(new Item.Properties().group(GardenRegistry.TAB).maxStackSize(1).maxDamage(777)).setRegistryName("planter"));
-      r.register(new BlockItem(GardenRegistry.MAGNET, new Item.Properties().group(GardenRegistry.TAB)).setRegistryName("magnet"));
+      r.register(new BlockItem(GardenRegistry.RANCHER, new Item.Properties().tab(GardenRegistry.TAB)).setRegistryName("rancher"));
+      r.register(new BlockItem(GardenRegistry.FEEDER, new Item.Properties().tab(GardenRegistry.TAB)).setRegistryName("feeder"));
+      r.register(new BlockItem(GardenRegistry.IRRIGATION, new Item.Properties().tab(GardenRegistry.TAB)).setRegistryName("irrigation_core"));
+      r.register(new ItemTiller(Tiers.GOLD, new Item.Properties().tab(GardenRegistry.TAB).stacksTo(1).durability(777)).setRegistryName("cultivator"));
+      r.register(new ItemWatering(new Item.Properties().tab(GardenRegistry.TAB).stacksTo(1)).setRegistryName("watering"));
+      r.register(new ItemFertilizer(new Item.Properties().tab(GardenRegistry.TAB)).setRegistryName("fertilizer"));
+      r.register(new ItemPlanter(new Item.Properties().tab(GardenRegistry.TAB).stacksTo(1).durability(777)).setRegistryName("planter"));
+      r.register(new BlockItem(GardenRegistry.MAGNET, new Item.Properties().tab(GardenRegistry.TAB)).setRegistryName("magnet"));
     }
 
     @SubscribeEvent
-    public static void onTileEntityRegistry(RegistryEvent.Register<TileEntityType<?>> event) {
-      IForgeRegistry<TileEntityType<?>> r = event.getRegistry();
-      r.register(TileEntityType.Builder.create(TileIrrigation::new, GardenRegistry.IRRIGATION).build(null).setRegistryName("irrigation_core"));
-      r.register(TileEntityType.Builder.create(TileRancher::new, GardenRegistry.RANCHER).build(null).setRegistryName("rancher"));
-      r.register(TileEntityType.Builder.create(TileFeeder::new, GardenRegistry.FEEDER).build(null).setRegistryName("feeder"));
-      r.register(TileEntityType.Builder.create(TileMagnet::new, GardenRegistry.MAGNET).build(null).setRegistryName("magnet"));
+    public static void onTileEntityRegistry(RegistryEvent.Register<BlockEntityType<?>> event) {
+      IForgeRegistry<BlockEntityType<?>> r = event.getRegistry();
+      r.register(BlockEntityType.Builder.of(TileIrrigation::new, GardenRegistry.IRRIGATION).build(null).setRegistryName("irrigation_core"));
+      r.register(BlockEntityType.Builder.of(TileRancher::new, GardenRegistry.RANCHER).build(null).setRegistryName("rancher"));
+      r.register(BlockEntityType.Builder.of(TileFeeder::new, GardenRegistry.FEEDER).build(null).setRegistryName("feeder"));
+      r.register(BlockEntityType.Builder.of(TileMagnet::new, GardenRegistry.MAGNET).build(null).setRegistryName("magnet"));
     }
   }
 }

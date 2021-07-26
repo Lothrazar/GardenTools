@@ -9,23 +9,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import net.minecraft.block.HopperBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.HopperTileEntity;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.HopperBlock;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.VanillaInventoryCodeHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class TileMagnet extends TileEntity implements ITickableTileEntity {
+public class TileMagnet extends BlockEntity implements TickableBlockEntity {
 
   private static final float ITEMSPEEDFAR = 0.8F;
   private static final float ITEMSPEEDCLOSE = 0.08F;
@@ -36,37 +36,37 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
 
   @Override
   public void tick() {
-    if (world.isRemote) {
+    if (level.isClientSide) {
       return;
     }
-    TileEntity below = world.getTileEntity(pos.down());
+    BlockEntity below = level.getBlockEntity(worldPosition.below());
     Set<Item> filter = new HashSet<>();
     if (below != null) {
       IItemHandler hopper = below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
       if (hopper != null) {
         filter.addAll(getItemsInItemHandler(hopper));
-        if (below instanceof HopperTileEntity) {
-          HopperTileEntity hopperTileEntity = (HopperTileEntity) below;
+        if (below instanceof HopperBlockEntity) {
+          HopperBlockEntity hopperTileEntity = (HopperBlockEntity) below;
           filter.addAll(getConnectedItemHandlerItems(hopperTileEntity));
         }
       }
     }
     final int radius = ConfigManager.MAGNET_RANGE.get();
     int vradius = 0;
-    int x = pos.getX();
-    int y = pos.getY();
-    int z = pos.getZ();
-    AxisAlignedBB axisalignedbb = (new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1)).grow(radius, vradius, radius);
-    List<ItemEntity> list = world.getEntitiesWithinAABB(ItemEntity.class, axisalignedbb);
+    int x = worldPosition.getX();
+    int y = worldPosition.getY();
+    int z = worldPosition.getZ();
+    AABB axisalignedbb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius, vradius, radius);
+    List<ItemEntity> list = level.getEntitiesOfClass(ItemEntity.class, axisalignedbb);
     pullEntityList(x + 0.2, y + 0.5, z + 0.2, true, list, filter);
   }
 
-  private List<Item> getConnectedItemHandlerItems(HopperTileEntity hopper) {
-    Direction hopperFacing = hopper.getBlockState().get(HopperBlock.FACING);
-    double x = hopper.getXPos() + hopperFacing.getXOffset();
-    double y = hopper.getYPos() + hopperFacing.getYOffset();
-    double z = hopper.getZPos() + hopperFacing.getZOffset();
-    Optional<Pair<IItemHandler, Object>> itemHandlerPair = VanillaInventoryCodeHooks.getItemHandler(hopper.getWorld(), x, y, z, hopperFacing.getOpposite());
+  private List<Item> getConnectedItemHandlerItems(HopperBlockEntity hopper) {
+    Direction hopperFacing = hopper.getBlockState().getValue(HopperBlock.FACING);
+    double x = hopper.getLevelX() + hopperFacing.getStepX();
+    double y = hopper.getLevelY() + hopperFacing.getStepY();
+    double z = hopper.getLevelZ() + hopperFacing.getStepZ();
+    Optional<Pair<IItemHandler, Object>> itemHandlerPair = VanillaInventoryCodeHooks.getItemHandler(hopper.getLevel(), x, y, z, hopperFacing.getOpposite());
     if (!itemHandlerPair.isPresent()) {
       return Collections.emptyList();
     }
@@ -94,7 +94,7 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
         continue;
       }
       //being paranoid
-      BlockPos p = entity.getPosition();
+      BlockPos p = entity.blockPosition();
       xDist = Math.abs(x - p.getX());
       zDist = Math.abs(z - p.getZ());
       hdist = Math.sqrt(xDist * xDist + zDist * zDist);
@@ -118,7 +118,7 @@ public class TileMagnet extends TileEntity implements ITickableTileEntity {
     double motionX = finalVector.x * modifier;
     double motionY = finalVector.y * modifier;
     double motionZ = finalVector.z * modifier;
-    entity.setMotion(motionX, motionY, motionZ);
+    entity.setDeltaMovement(motionX, motionY, motionZ);
   }
 
   private List<Item> getItemsInItemHandler(IItemHandler itemHandler) {

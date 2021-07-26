@@ -7,32 +7,35 @@ import com.lothrazar.gardentools.UtilFakePlayer;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.FakePlayer;
 
-public class TileFeeder extends TileEntity implements ITickableTileEntity {
+public class TileFeeder extends BlockEntity implements TickableBlockEntity {
 
   private WeakReference<FakePlayer> fakePlayer;
 
   public TileFeeder() {
+    EntityBlock y;
+    BlockEntity yy;
     super(GardenRegistry.FEEDERTILE);
   }
 
-  public WeakReference<FakePlayer> setupBeforeTrigger(ServerWorld sw, String name, UUID uuid) {
+  public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid) {
     WeakReference<FakePlayer> fakePlayer = UtilFakePlayer.initFakePlayer(sw, uuid, name);
     if (fakePlayer == null) {
       GardenMod.LOGGER.error("Fake player failed to init " + name + " " + uuid);
       return null;
     }
     //fake player facing the same direction as tile. for throwables
-    fakePlayer.get().setPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
+    fakePlayer.get().setPos(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ());
     //seems to help interact() mob drops like milk
     //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
@@ -40,48 +43,48 @@ public class TileFeeder extends TileEntity implements ITickableTileEntity {
 
   @Override
   public void tick() {
-    if (world.isRemote || world.getGameTime() % 20 != 0) {
+    if (level.isClientSide || level.getGameTime() % 20 != 0) {
       return;
     }
     //only fire every 20 ticks
-    if ((world instanceof ServerWorld) && fakePlayer == null) {
-      fakePlayer = setupBeforeTrigger((ServerWorld) world, "rancher", UUID.randomUUID());
+    if ((level instanceof ServerLevel) && fakePlayer == null) {
+      fakePlayer = setupBeforeTrigger((ServerLevel) level, "rancher", UUID.randomUUID());
     }
-    int x = pos.getX();
-    int y = pos.getY();
-    int z = pos.getZ();
+    int x = worldPosition.getX();
+    int y = worldPosition.getY();
+    int z = worldPosition.getZ();
     final int radius = ConfigManager.FEEDER_RANGE.get();
-    AxisAlignedBB aabb = (new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1)).grow(radius).expand(0.0D, world.getHeight(), 0.0D);
+    AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
     //first find items
-    List<ItemEntity> itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, aabb);
+    List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, aabb);
     //find entities
-    List<AnimalEntity> list = world.getEntitiesWithinAABB(AnimalEntity.class, aabb);
-    for (AnimalEntity entity : list) {
+    List<Animal> list = level.getEntitiesOfClass(Animal.class, aabb);
+    for (Animal entity : list) {
       if (entity == null || fakePlayer == null || fakePlayer.get() == null) {
         continue;
       }
       /*****************************/
-      if (!entity.isChild()) {
+      if (!entity.isBaby()) {
         //no feedin the child
         ItemEntity eiBreedingItem = this.findBreedingItem(itemEntities, entity);
         //        fakePlayer.get().setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.WHEAT));
         if (eiBreedingItem != null) {
           //ok  feed
-          fakePlayer.get().setHeldItem(Hand.MAIN_HAND, eiBreedingItem.getItem());
-          ActionResultType result = entity.func_230254_b_(fakePlayer.get(), Hand.MAIN_HAND);
+          fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, eiBreedingItem.getItem());
+          InteractionResult result = entity.mobInteract(fakePlayer.get(), InteractionHand.MAIN_HAND);
           //          GardenMod.LOGGER.info("result animal feed " + result);
-          if (result == ActionResultType.CONSUME || result == ActionResultType.SUCCESS) {
-            eiBreedingItem.setItem(fakePlayer.get().getHeldItemMainhand());
+          if (result == InteractionResult.CONSUME || result == InteractionResult.SUCCESS) {
+            eiBreedingItem.setItem(fakePlayer.get().getMainHandItem());
           }
         }
       }
     }
   }
 
-  private ItemEntity findBreedingItem(List<ItemEntity> itemEntities, AnimalEntity entity) {
+  private ItemEntity findBreedingItem(List<ItemEntity> itemEntities, Animal entity) {
     for (ItemEntity ei : itemEntities) {
       //alive stack that matches the item
-      if (ei.isAlive() && entity.isBreedingItem(ei.getItem())) {
+      if (ei.isAlive() && entity.isFood(ei.getItem())) {
         return ei;
       }
     }

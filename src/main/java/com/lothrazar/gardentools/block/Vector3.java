@@ -1,6 +1,6 @@
 package com.lothrazar.gardentools.block;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 /**
  * FROM https://github.com/Lothrazar/Cyclic/blob/90ee1c0b6c1be780010cdb55579fd589b1bdb783/src/main/java/com/lothrazar/cyclic/data/Vector3.java
@@ -30,7 +30,7 @@ public class Vector3 {
   }
 
   public Vector3(Entity e) {
-    this(e.lastTickPosX, e.lastTickPosY, e.lastTickPosZ);
+    this(e.xOld, e.yOld, e.zOld);
   }
 
   public double mag() {
