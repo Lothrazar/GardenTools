@@ -99,7 +99,7 @@ public class ItemTiller extends HoeItem {
 
       player.level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
       consumer.accept(context);
-      this.moisturize(context.getLevel().getBlockState(blockpos));
+      this.moisturize(context.getLevel(), blockpos, context.getLevel().getBlockState(blockpos));
       Player playerentity = context.getPlayer();
       world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
       if (playerentity != null) {
@@ -113,15 +113,15 @@ public class ItemTiller extends HoeItem {
     return false;
   }
 
-  private BlockState moisturize(BlockState blockstate) {
+  private void moisturize(Level world, BlockPos pos, BlockState blockstate) {
     try {
-      if (blockstate.getBlock() == Blocks.FARMLAND && GardenMod.CONFIG.getMoisture() > 0) {
-        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
+      if (GardenMod.CONFIG.getMoisture() > 0) {
+//        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
+        world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()),3);
       }
     }
     catch (Exception e) {
       GardenMod.LOGGER.error("ItemTiller Moisturize error", e);
     }
-    return blockstate;
   }
 }

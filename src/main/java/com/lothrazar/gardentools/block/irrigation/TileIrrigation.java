@@ -4,6 +4,7 @@ import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -42,10 +43,12 @@ public class TileIrrigation extends BlockEntity {
 
   @Override
   public void onLoad() {
+    super.onLoad();
     if (!level.isClientSide) {
       AABB box = new AABB(worldPosition);
       box = box.inflate(GardenMod.CONFIG.getIrrigationRange());
-      //      System.setProperty("forge.debugFarmlandWaterManager", "true");
+      System.out.println("farmland box");
+      System.setProperty("forge.debugFarmlandWaterManager", "true");
       farmlandTicket = FarmlandWaterManager.addAABBTicket(level, box);
       farmlandTicket.validate();
     }
@@ -60,5 +63,13 @@ public class TileIrrigation extends BlockEntity {
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileIrrigation tile) {
     tile.tank.fill(new FluidStack(Fluids.WATER, FluidAttributes.BUCKET_VOLUME), FluidAction.EXECUTE);
+    if(tile.farmlandTicket == null) {
+
+      AABB box = new AABB(tile.worldPosition);
+      box = box.inflate(GardenMod.CONFIG.getIrrigationRange());
+    //  System.setProperty("forge.debugFarmlandWaterManager", "true");
+      tile.farmlandTicket = FarmlandWaterManager.addAABBTicket(level, box);
+      tile.farmlandTicket.validate();
+    }
   }
 }
