@@ -4,9 +4,9 @@ import com.lothrazar.gardentools.block.feeder.TileFeeder;
 import com.lothrazar.gardentools.block.irrigation.TileIrrigation;
 import com.lothrazar.gardentools.block.magnet.TileMagnet;
 import com.lothrazar.gardentools.block.rancher.TileRancher;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 

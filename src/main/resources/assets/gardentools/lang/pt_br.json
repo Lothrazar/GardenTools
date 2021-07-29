@@ -1,9 +1,9 @@
 {
-	"itemGroup.gardentools": "Garden Tools",
-	"item.gardentools.cultivator":"Cultivador",
-	"item.gardentools.cultivator.tooltip":"Permite arar a terra à distância e suporte à elevação",
-	"item.gardentools.planter":"Espátula Plantadora",
-	"item.gardentools.planter.tooltip":"Encontra sementes em seu inventário e planta na Terra Arada",
-	"block.gardentools.irrigation_core":"Núcleo de Irrigação",
-	"block.gardentools.irrigation_core.tooltip":"Mantém as Terras Aradas próximas hidratadas"
+  "itemGroup.gardentools": "Garden Tools",
+  "item.gardentools.cultivator": "Cultivador",
+  "item.gardentools.cultivator.tooltip": "Permite arar a terra à distância e suporte à elevação",
+  "item.gardentools.planter": "Espátula Plantadora",
+  "item.gardentools.planter.tooltip": "Encontra sementes em seu inventário e planta na Terra Arada",
+  "block.gardentools.irrigation_core": "Núcleo de Irrigação",
+  "block.gardentools.irrigation_core.tooltip": "Mantém as Terras Aradas próximas hidratadas"
 }   

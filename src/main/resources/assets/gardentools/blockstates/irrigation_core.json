@@ -1,7 +1,7 @@
 {
-    "variants": {
-        "": {
-            "model": "gardentools:block/irrigation_core"
-        }
+  "variants": {
+    "": {
+      "model": "gardentools:block/irrigation_core"
     }
+  }
 }

@@ -1,7 +1,7 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gardentools:item/cultivator"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gardentools:item/cultivator"
+  }
 }
 

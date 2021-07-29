@@ -6,13 +6,13 @@
     "yby"
   ],
   "key": {
-    "b": {    
+    "b": {
       "item": "minecraft:water_bucket"
     },
-    "c": {    
+    "c": {
       "item": "minecraft:chain"
     },
-    "y": {    
+    "y": {
       "item": "minecraft:clay"
     }
   },

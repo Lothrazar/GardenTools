@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-    	maven { url = 'https://maven.minecraftforge.net' }  
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
@@ -15,9 +15,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'checkstyle'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
 import net.minecraftforge.gradle.common.tasks.SignJar
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
 
 version = "${mc_version}-${mod_version}"
 group = 'com.lothrazar.gardentools' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -30,14 +29,14 @@ checkstyle {
     config project.resources.text.fromUri("https://raw.githubusercontent.com/Lothrazar/Cyclic/trunk/1.16/checkstyle.xml")
 }
 checkstyleMain {
-    source ='src/main/java'
+    source = 'src/main/java'
 }
 
 minecraft {
-   mappings channel: 'official', version: '1.17.1'
-   
+    mappings channel: 'official', version: '1.17.1'
+
     //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
+
     // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
@@ -83,51 +82,51 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
- 
- //   implementation fg.deobf("mezz.jei:${jei_version}")
-    
 
-  //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3163007")
+    //   implementation fg.deobf("mezz.jei:${jei_version}")
+
+
+    //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3163007")
     //implementation fg.deobf("curse.maven:cyclic-239286:3188762")
-  //  implementation fg.deobf("curse.maven:ctm-267602:3137659")
-  //  implementation fg.deobf("curse.maven:storage-drawers-223852:3180569")
-  //  implementation fg.deobf("curse.maven:refined-storage-243076:3157354")
-  //  implementation fg.deobf("curse.maven:cucumber-272335:3187116")
-  //  implementation fg.deobf("curse.maven:mystical-agriculture-246640:3152061")
-    
+    //  implementation fg.deobf("curse.maven:ctm-267602:3137659")
+    //  implementation fg.deobf("curse.maven:storage-drawers-223852:3180569")
+    //  implementation fg.deobf("curse.maven:refined-storage-243076:3157354")
+    //  implementation fg.deobf("curse.maven:cucumber-272335:3187116")
+    //  implementation fg.deobf("curse.maven:mystical-agriculture-246640:3152061")
+
 }
 repositories {
-  maven {
-    // location of the maven that hosts JEI files
-    name = "Progwml6 maven"
-    url = "https://dvs1.progwml6.com/files/maven/"
-  }
-  maven {
-    // location of a maven mirror for JEI files, as a fallback
-    name = "ModMaven"
-    url = "https://modmaven.k-4u.nl"
-  }
-  maven { url = 'https://www.cursemaven.com'  }
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
+    maven { url = 'https://www.cursemaven.com' }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
-            "Specification-Title": "gardentools",
-            "Specification-Vendor": "gardentoolssareus",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"gardentoolssareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title"     : "gardentools",
+                "Specification-Vendor"    : "gardentoolssareus",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "gardentoolssareus",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
 // Example configuration to allow publishing using the maven-publish task
 // This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
+jar.finalizedBy('reobfJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 //publish.dependsOn('reobfJar')
 
@@ -167,5 +166,5 @@ task copyJar(type: Copy) {
 // build.finalizedBy copyJar
 
 cleanJar {
-  delete 'build/libs'
+    delete 'build/libs'
 }

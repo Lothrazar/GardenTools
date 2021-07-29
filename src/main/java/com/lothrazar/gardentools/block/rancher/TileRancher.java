@@ -7,21 +7,20 @@ import com.lothrazar.gardentools.UtilFakePlayer;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
-
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.util.FakePlayer;
 
@@ -30,7 +29,7 @@ public class TileRancher extends BlockEntity {
   private WeakReference<FakePlayer> fakePlayer;
 
   public TileRancher(BlockPos pos, BlockState state) {
-    super(GardenRegistry.RANCHERTILE,pos,state);
+    super(GardenRegistry.RANCHERTILE, pos, state);
   }
 
   public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid) {
@@ -47,7 +46,6 @@ public class TileRancher extends BlockEntity {
   }
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileRancher tile) {
-
     if (level.isClientSide || level.getGameTime() % 20 != 0) {
       return;
     }
@@ -76,7 +74,7 @@ public class TileRancher extends BlockEntity {
           tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
           //
           List<ItemStack> drops = sheep.onSheared(tile.fakePlayer.get(),
-                  tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition, 1);
+              tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition, 1);
           drops.forEach(d -> {
             entity.spawnAtLocation(d, 1.0F);
           });
@@ -116,7 +114,7 @@ public class TileRancher extends BlockEntity {
 
   /**
    * find empty bucket
-   * 
+   *
    * @param itemEntities
    * @param bucket
    * @return
@@ -130,5 +128,4 @@ public class TileRancher extends BlockEntity {
     }
     return null;
   }
-
 }

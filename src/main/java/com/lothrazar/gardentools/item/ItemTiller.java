@@ -1,35 +1,32 @@
 package com.lothrazar.gardentools.item;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.lothrazar.gardentools.GardenMod;
+import com.mojang.datafixers.util.Pair;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
-
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.world.item.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FarmBlock;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ItemTiller extends HoeItem {
 
@@ -89,14 +86,13 @@ public class ItemTiller extends HoeItem {
     Level world = context.getLevel();
     Block blockHere = world.getBlockState(blockpos).getBlock();
     Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = HoeItem.TILLABLES.get(blockHere);
-    if(pair == null){
+    if (pair == null) {
       return false;
     }
     Predicate<UseOnContext> predicate = pair.getFirst();
     Consumer<UseOnContext> consumer = pair.getSecond();
-    if(predicate.test(context)){
+    if (predicate.test(context)) {
       Player player = context.getPlayer();
-
       player.level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
       consumer.accept(context);
       this.moisturize(context.getLevel(), blockpos, context.getLevel().getBlockState(blockpos));
@@ -109,15 +105,14 @@ public class ItemTiller extends HoeItem {
       }
       return true;
     }
-
     return false;
   }
 
   private void moisturize(Level world, BlockPos pos, BlockState blockstate) {
     try {
       if (GardenMod.CONFIG.getMoisture() > 0) {
-//        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
-        world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()),3);
+        //        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
+        world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()), 3);
       }
     }
     catch (Exception e) {

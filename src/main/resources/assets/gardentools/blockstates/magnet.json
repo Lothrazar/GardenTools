@@ -1,7 +1,7 @@
 {
-    "variants": {
-        "": {
-            "model": "gardentools:block/magnet"
-        }
+  "variants": {
+    "": {
+      "model": "gardentools:block/magnet"
     }
+  }
 }
