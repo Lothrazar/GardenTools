@@ -72,7 +72,7 @@ public class ItemWatering extends Item {
         if (world.random.nextDouble() < PCT_GROW_IF_LESS) {
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
           if (world instanceof ServerLevel) {
-            bs.randomTick((ServerLevel) world, posCurrent, random);
+            bs.randomTick((ServerLevel) world, posCurrent, world.random);
           }
           //          world.notifyBlockUpdate(posCurrent, state, state, 3);
         }

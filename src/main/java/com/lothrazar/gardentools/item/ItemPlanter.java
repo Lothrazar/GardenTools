@@ -108,9 +108,9 @@ public class ItemPlanter extends Item {
   }
 
   private ItemStack getSeed(Player player) {
-    for (ItemStack stack : player.inventory.items) {
+    for (ItemStack stack : player.getInventory().items) {
       if (!stack.isEmpty()) {
-        if (stack.getItem().is(Tags.Items.SEEDS)) {
+        if (stack.is(Tags.Items.SEEDS)) {
           return stack;
         }
         else {

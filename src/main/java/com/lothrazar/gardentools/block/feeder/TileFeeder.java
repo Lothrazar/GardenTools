@@ -7,52 +7,54 @@ import com.lothrazar.gardentools.UtilFakePlayer;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.UUID;
+
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.FakePlayer;
 
-public class TileFeeder extends BlockEntity implements TickableBlockEntity {
+public class TileFeeder extends BlockEntity {
 
   private WeakReference<FakePlayer> fakePlayer;
 
-  public TileFeeder() {
+  public TileFeeder(BlockPos pos, BlockState state) {
+    super(GardenRegistry.FEEDERTILE, pos, state);
     EntityBlock y;
     BlockEntity yy;
-    super(GardenRegistry.FEEDERTILE);
   }
 
-  public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid) {
+  public static WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid, BlockPos p) {
     WeakReference<FakePlayer> fakePlayer = UtilFakePlayer.initFakePlayer(sw, uuid, name);
     if (fakePlayer == null) {
       GardenMod.LOGGER.error("Fake player failed to init " + name + " " + uuid);
       return null;
     }
     //fake player facing the same direction as tile. for throwables
-    fakePlayer.get().setPos(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ());
+    fakePlayer.get().setPos(p.getX(), p.getY(), p.getZ());
     //seems to help interact() mob drops like milk
     //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
   }
 
-  @Override
-  public void tick() {
+  public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileFeeder tile) {
     if (level.isClientSide || level.getGameTime() % 20 != 0) {
       return;
     }
     //only fire every 20 ticks
-    if ((level instanceof ServerLevel) && fakePlayer == null) {
-      fakePlayer = setupBeforeTrigger((ServerLevel) level, "rancher", UUID.randomUUID());
+    if ((level instanceof ServerLevel) && tile.fakePlayer == null) {
+      tile.fakePlayer = setupBeforeTrigger((ServerLevel) level, "rancher", UUID.randomUUID(), blockPos);
     }
-    int x = worldPosition.getX();
-    int y = worldPosition.getY();
-    int z = worldPosition.getZ();
+    int x = tile.worldPosition.getX();
+    int y = tile.worldPosition.getY();
+    int z = tile.worldPosition.getZ();
     final int radius = ConfigManager.FEEDER_RANGE.get();
     AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
     //first find items
@@ -60,21 +62,21 @@ public class TileFeeder extends BlockEntity implements TickableBlockEntity {
     //find entities
     List<Animal> list = level.getEntitiesOfClass(Animal.class, aabb);
     for (Animal entity : list) {
-      if (entity == null || fakePlayer == null || fakePlayer.get() == null) {
+      if (entity == null || tile.fakePlayer == null || tile.fakePlayer.get() == null) {
         continue;
       }
       /*****************************/
       if (!entity.isBaby()) {
         //no feedin the child
-        ItemEntity eiBreedingItem = this.findBreedingItem(itemEntities, entity);
+        ItemEntity eiBreedingItem = tile.findBreedingItem(itemEntities, entity);
         //        fakePlayer.get().setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.WHEAT));
         if (eiBreedingItem != null) {
           //ok  feed
-          fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, eiBreedingItem.getItem());
-          InteractionResult result = entity.mobInteract(fakePlayer.get(), InteractionHand.MAIN_HAND);
+          tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, eiBreedingItem.getItem());
+          InteractionResult result = entity.mobInteract(tile.fakePlayer.get(), InteractionHand.MAIN_HAND);
           //          GardenMod.LOGGER.info("result animal feed " + result);
           if (result == InteractionResult.CONSUME || result == InteractionResult.SUCCESS) {
-            eiBreedingItem.setItem(fakePlayer.get().getMainHandItem());
+            eiBreedingItem.setItem(tile.fakePlayer.get().getMainHandItem());
           }
         }
       }
@@ -89,5 +91,8 @@ public class TileFeeder extends BlockEntity implements TickableBlockEntity {
       }
     }
     return null;
+  }
+
+  public static void clientTick(Level level, BlockPos blockPos, BlockState blockState, TileFeeder tileFeeder) {
   }
 }

@@ -2,7 +2,17 @@ package com.lothrazar.gardentools.block.rancher;
 
 import java.util.List;
 import javax.annotation.Nullable;
+
+import com.lothrazar.gardentools.GardenRegistry;
+import com.lothrazar.gardentools.block.irrigation.TileIrrigation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ItemStack;
@@ -16,20 +26,24 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class BlockRancher extends Block {
+public class BlockRancher extends BaseEntityBlock {
 
   public BlockRancher(Properties properties) {
     super(properties.strength(1.3F));
   }
 
   @Override
-  public boolean hasTileEntity(BlockState state) {
-    return true;
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new TileRancher(pos, state);
   }
 
   @Override
-  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-    return new TileRancher();
+  public RenderShape getRenderShape(BlockState bs) {
+    return RenderShape.MODEL;
+  }
+  @Override
+  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    return createTickerHelper(type, GardenRegistry.RANCHERTILE, world.isClientSide ? null : TileRancher::serverTick);
   }
 
   @Override

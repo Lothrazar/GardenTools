@@ -23,7 +23,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -48,11 +47,6 @@ public class GardenMod {
 
   private void setup(final FMLCommonSetupEvent event) {
     //now all blocks/items exist 
-  }
-
-  @SubscribeEvent
-  public void onServerStarting(FMLServerStartingEvent event) {
-    //you probably will not need this
   }
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

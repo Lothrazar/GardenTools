@@ -3,7 +3,15 @@ package com.lothrazar.gardentools.block.irrigation;
 import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import com.lothrazar.gardentools.GardenRegistry;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BellBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
@@ -31,20 +39,24 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class BlockIrrigation extends Block {
+public class BlockIrrigation extends BaseEntityBlock {
 
   public BlockIrrigation(Properties properties) {
     super(properties.strength(1.3F).noOcclusion());
   }
 
   @Override
-  public boolean hasTileEntity(BlockState state) {
-    return true;
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new TileIrrigation(pos, state);
   }
 
   @Override
-  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-    return new TileIrrigation();
+  public RenderShape getRenderShape(BlockState bs) {
+    return RenderShape.MODEL;
+  }
+  @Override
+  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    return createTickerHelper(type, GardenRegistry.IRRIGATIONTILE, world.isClientSide ? null : TileIrrigation::serverTick);
   }
 
   @Override

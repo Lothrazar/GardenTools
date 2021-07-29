@@ -9,15 +9,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -25,37 +27,38 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.VanillaInventoryCodeHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class TileMagnet extends BlockEntity implements TickableBlockEntity {
+public class TileMagnet extends BlockEntity {
 
   private static final float ITEMSPEEDFAR = 0.8F;
   private static final float ITEMSPEEDCLOSE = 0.08F;
 
-  public TileMagnet() {
-    super(GardenRegistry.MAGNETTILE);
+  public TileMagnet(BlockPos pos, BlockState state) {
+    super(GardenRegistry.MAGNETTILE,pos,state);
   }
 
-  @Override
-  public void tick() {
+
+  public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileMagnet tile) {
+
     if (level.isClientSide) {
       return;
     }
-    BlockEntity below = level.getBlockEntity(worldPosition.below());
+    BlockEntity below = level.getBlockEntity(tile.worldPosition.below());
     Set<Item> filter = new HashSet<>();
     if (below != null) {
       IItemHandler hopper = below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
       if (hopper != null) {
-        filter.addAll(getItemsInItemHandler(hopper));
+        filter.addAll(tile.getItemsInItemHandler(hopper));
         if (below instanceof HopperBlockEntity) {
           HopperBlockEntity hopperTileEntity = (HopperBlockEntity) below;
-          filter.addAll(getConnectedItemHandlerItems(hopperTileEntity));
+          filter.addAll(tile.getConnectedItemHandlerItems(hopperTileEntity));
         }
       }
     }
     final int radius = ConfigManager.MAGNET_RANGE.get();
     int vradius = 0;
-    int x = worldPosition.getX();
-    int y = worldPosition.getY();
-    int z = worldPosition.getZ();
+    int x = tile.worldPosition.getX();
+    int y = tile.worldPosition.getY();
+    int z = tile.worldPosition.getZ();
     AABB axisalignedbb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius, vradius, radius);
     List<ItemEntity> list = level.getEntitiesOfClass(ItemEntity.class, axisalignedbb);
     pullEntityList(x + 0.2, y + 0.5, z + 0.2, true, list, filter);

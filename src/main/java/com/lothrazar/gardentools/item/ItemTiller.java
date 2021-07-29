@@ -1,17 +1,21 @@
 package com.lothrazar.gardentools.item;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.lothrazar.gardentools.GardenMod;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
+
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FarmBlock;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
@@ -84,20 +88,28 @@ public class ItemTiller extends HoeItem {
   private boolean hoeBlock(UseOnContext context, BlockPos blockpos) {
     Level world = context.getLevel();
     Block blockHere = world.getBlockState(blockpos).getBlock();
-    BlockState blockstate = TILLABLES.get(blockHere);
-    if (blockstate != null) {
-      blockstate = this.moisturize(blockstate);
-      if (world.setBlock(blockpos, blockstate, 11)) {
-        Player playerentity = context.getPlayer();
-        world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-        if (playerentity != null) {
-          context.getItemInHand().hurtAndBreak(1, playerentity, (p) -> {
-            p.broadcastBreakEvent(context.getHand());
-          });
-        }
-        return true;
-      }
+    Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = HoeItem.TILLABLES.get(blockHere);
+    if(pair == null){
+      return false;
     }
+    Predicate<UseOnContext> predicate = pair.getFirst();
+    Consumer<UseOnContext> consumer = pair.getSecond();
+    if(predicate.test(context)){
+      Player player = context.getPlayer();
+
+      player.level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+      consumer.accept(context);
+      this.moisturize(context.getLevel().getBlockState(blockpos));
+      Player playerentity = context.getPlayer();
+      world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+      if (playerentity != null) {
+        context.getItemInHand().hurtAndBreak(1, playerentity, (p) -> {
+          p.broadcastBreakEvent(context.getHand());
+        });
+      }
+      return true;
+    }
+
     return false;
   }
 

@@ -3,8 +3,10 @@ package com.lothrazar.gardentools.block.irrigation;
 import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
@@ -18,20 +20,15 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class TileIrrigation extends BlockEntity implements TickableBlockEntity {
+public class TileIrrigation extends BlockEntity {
 
   private AABBTicket farmlandTicket;
   FluidTank tank;
   private final LazyOptional<FluidTank> tankWrapper = LazyOptional.of(() -> tank);
 
-  public TileIrrigation() {
-    super(GardenRegistry.IRRIGATIONTILE);
+  public TileIrrigation(BlockPos pos, BlockState state) {
+    super(GardenRegistry.IRRIGATIONTILE,pos,state);
     tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
-  }
-
-  @Override
-  public void tick() {
-    tank.fill(new FluidStack(Fluids.WATER, FluidAttributes.BUCKET_VOLUME), FluidAction.EXECUTE);
   }
 
   @Override
@@ -59,5 +56,9 @@ public class TileIrrigation extends BlockEntity implements TickableBlockEntity {
     if (!level.isClientSide && farmlandTicket != null) {
       farmlandTicket.invalidate();
     }
+  }
+
+  public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileIrrigation tile) {
+    tile.tank.fill(new FluidStack(Fluids.WATER, FluidAttributes.BUCKET_VOLUME), FluidAction.EXECUTE);
   }
 }

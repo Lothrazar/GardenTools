@@ -2,7 +2,16 @@ package com.lothrazar.gardentools.block.magnet;
 
 import java.util.List;
 import javax.annotation.Nullable;
+
+import com.lothrazar.gardentools.GardenRegistry;
+import com.lothrazar.gardentools.block.irrigation.TileIrrigation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +29,7 @@ import net.minecraftforge.common.ToolType;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class BlockMagnet extends Block {
+public class BlockMagnet extends BaseEntityBlock {
 
   VoxelShape shape = Block.box(6.0D, 0.0D, 6.0D,
       10.0D, 8.0D, 10.0D);
@@ -36,13 +45,17 @@ public class BlockMagnet extends Block {
   }
 
   @Override
-  public boolean hasTileEntity(BlockState state) {
-    return true;
+  public RenderShape getRenderShape(BlockState bs) {
+    return RenderShape.MODEL;
+  }
+  @Override
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new TileMagnet(pos, state);
   }
 
   @Override
-  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-    return new TileMagnet();
+  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    return createTickerHelper(type, GardenRegistry.MAGNETTILE, world.isClientSide ? null : TileMagnet::serverTick);
   }
 
   @Override
