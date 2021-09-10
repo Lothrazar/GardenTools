@@ -2,7 +2,6 @@ package com.lothrazar.gardentools.block.magnet;
 
 import com.lothrazar.gardentools.GardenRegistry;
 import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ToolType;
 
 public class BlockMagnet extends BaseEntityBlock {
 
@@ -30,8 +28,7 @@ public class BlockMagnet extends BaseEntityBlock {
       10.0D, 8.0D, 10.0D);
 
   public BlockMagnet(Properties properties) {
-    super(properties.strength(1.3F).harvestTool(ToolType.PICKAXE).noOcclusion()
-        .lightLevel(state -> 7));
+    super(properties.strength(1.3F).noOcclusion().lightLevel(state -> 7));
   }
 
   @Override
@@ -56,7 +53,7 @@ public class BlockMagnet extends BaseEntityBlock {
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
     TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
     t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);

@@ -42,7 +42,7 @@ public class ItemPlanter extends Item {
       //get seed ready if any are left
       if (seeds.isEmpty()) {
         seeds = getSeed(player);
-        if (seeds.isEmpty()) {
+        if (seeds.isEmpty() && !player.isCreative()) {
           break;
           //for sure done
         }
@@ -81,7 +81,9 @@ public class ItemPlanter extends Item {
       }
       if (didPlant) {
         countPlanted++;
-        seeds.shrink(1);
+        if (!player.isCreative()) {
+          seeds.shrink(1);
+        }
       }
     }
     //loop is complete
