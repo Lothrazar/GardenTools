@@ -1,8 +1,6 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -13,27 +11,14 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'checkstyle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
-
-import net.minecraftforge.gradle.common.tasks.SignJar
-
 version = "${mc_version}-${mod_version}"
 group = 'com.lothrazar.gardentools' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'gardentools'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-checkstyle {
-    toolVersion '8.23'
-    config project.resources.text.fromUri("https://raw.githubusercontent.com/Lothrazar/Cyclic/trunk/1.16/checkstyle.xml")
-}
-checkstyleMain {
-    source = 'src/main/java'
-}
-
 minecraft {
-    mappings channel: 'official', version: '1.18'
+    mappings channel: 'official', version: '1.18.2'
 
     //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
@@ -82,17 +67,10 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-
     //   implementation fg.deobf("mezz.jei:${jei_version}")
 
-
     //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3163007")
-    //implementation fg.deobf("curse.maven:cyclic-239286:3188762")
-    //  implementation fg.deobf("curse.maven:ctm-267602:3137659")
-    //  implementation fg.deobf("curse.maven:storage-drawers-223852:3180569")
-    //  implementation fg.deobf("curse.maven:refined-storage-243076:3157354")
-    //  implementation fg.deobf("curse.maven:cucumber-272335:3187116")
-    //  implementation fg.deobf("curse.maven:mystical-agriculture-246640:3152061")
+    //  implementation fg.deobf("curse.maven:cyclic-239286:3188762")
 
 }
 repositories {
@@ -108,6 +86,11 @@ repositories {
     }
     maven { url = 'https://www.cursemaven.com' }
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
@@ -143,27 +126,11 @@ publishing {
     }
 }
 
-task signJar(type: SignJar, dependsOn: jar) {
-
-    // findProperty allows us to reference the property without it existing. 
-    // Using project.propName would cause the script to fail validation if 
-    // the property did not exist. 
-    keyStore = project.findProperty('keyStore')
-    alias = project.findProperty('keyStoreAlias')
-    storePass = project.findProperty('keyStorePass')
-    keyPass = project.findProperty('keyStoreKeyPass')
-    inputFile = jar.archivePath
-    outputFile = jar.archivePath
-}
 
 task copyJar(type: Copy) {
     from jar
     into "${dist_folder}"
 }
-
-build.dependsOn signJar
-
-build.finalizedBy copyJar
 
 task cleanJar {
   delete 'build/libs'
