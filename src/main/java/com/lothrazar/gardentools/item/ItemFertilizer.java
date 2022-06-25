@@ -1,14 +1,14 @@
 package com.lothrazar.gardentools.item;
 
-import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
@@ -33,7 +33,7 @@ public class ItemFertilizer extends Item {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
     t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }

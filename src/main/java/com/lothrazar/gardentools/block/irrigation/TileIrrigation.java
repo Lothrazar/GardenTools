@@ -14,8 +14,8 @@ import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -27,8 +27,8 @@ public class TileIrrigation extends BlockEntity {
   private final LazyOptional<FluidTank> tankWrapper = LazyOptional.of(() -> tank);
 
   public TileIrrigation(BlockPos pos, BlockState state) {
-    super(GardenRegistry.IRRIGATIONTILE, pos, state);
-    tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
+    super(GardenRegistry.TE_IRRIGATION_CORE.get(), pos, state);
+    tank = new FluidTank(FluidType.BUCKET_VOLUME);
   }
 
   @Override
@@ -60,7 +60,7 @@ public class TileIrrigation extends BlockEntity {
   }
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileIrrigation tile) {
-    tile.tank.fill(new FluidStack(Fluids.WATER, FluidAttributes.BUCKET_VOLUME), FluidAction.EXECUTE);
+    tile.tank.fill(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), FluidAction.EXECUTE);
     if (tile.farmlandTicket == null) {
       AABB box = new AABB(tile.worldPosition);
       box = box.inflate(GardenMod.CONFIG.getIrrigationRange());

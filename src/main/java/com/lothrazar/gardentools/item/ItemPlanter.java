@@ -1,13 +1,13 @@
 package com.lothrazar.gardentools.item;
 
-import com.lothrazar.gardentools.GardenMod;
 import java.util.List;
 import javax.annotation.Nullable;
+import com.lothrazar.gardentools.GardenMod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,7 +25,7 @@ import net.minecraftforge.common.Tags;
 public class ItemPlanter extends Item {
 
   public ItemPlanter(Properties properties) {
-    super(properties);
+    super(properties.stacksTo(1).durability(777));
   }
 
   @Override
@@ -128,7 +128,7 @@ public class ItemPlanter extends Item {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
     t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }

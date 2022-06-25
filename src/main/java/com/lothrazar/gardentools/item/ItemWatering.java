@@ -1,14 +1,14 @@
 package com.lothrazar.gardentools.item;
 
-import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import java.util.stream.Stream;
+import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
@@ -31,13 +31,13 @@ public class ItemWatering extends Item {
   private static final double PCT_GROW_IF_LESS = 0.1;
 
   public ItemWatering(Item.Properties builder) {
-    super(builder);
+    super(builder.stacksTo(1));
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
     t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }

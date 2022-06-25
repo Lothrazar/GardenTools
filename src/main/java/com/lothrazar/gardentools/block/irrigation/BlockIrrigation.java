@@ -1,13 +1,13 @@
 package com.lothrazar.gardentools.block.irrigation;
 
-import com.lothrazar.gardentools.ConfigManager;
-import com.lothrazar.gardentools.GardenRegistry;
 import java.util.List;
 import javax.annotation.Nullable;
+import com.lothrazar.gardentools.ConfigManager;
+import com.lothrazar.gardentools.GardenRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -51,13 +51,13 @@ public class BlockIrrigation extends BaseEntityBlock {
 
   @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-    return createTickerHelper(type, GardenRegistry.IRRIGATIONTILE, world.isClientSide ? null : TileIrrigation::serverTick);
+    return createTickerHelper(type, GardenRegistry.TE_IRRIGATION_CORE.get(), world.isClientSide ? null : TileIrrigation::serverTick);
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
     t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }
@@ -87,6 +87,8 @@ public class BlockIrrigation extends BaseEntityBlock {
     }
     return super.use(state, world, pos, player, hand, hit);
   }
+  //ClientboundSoundPacket(SoundEvent p_237840_, SoundSource p_237841_, double x, double p_237843_, double p_237844_, 
+  //  float p_237845_, float p_237846_, long p_237847_) {
 
   public static void playSoundFromServer(ServerPlayer entityIn, SoundEvent soundIn) {
     if (soundIn == null || entityIn == null) {
@@ -96,6 +98,6 @@ public class BlockIrrigation extends BaseEntityBlock {
         soundIn,
         SoundSource.BLOCKS,
         entityIn.xOld, entityIn.yOld, entityIn.zOld,
-        1.0f, 1.0f));
+        1.0f, 1.0f, 0L)); // seed = 0?? 
   }
 }

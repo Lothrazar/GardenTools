@@ -1,12 +1,12 @@
 package com.lothrazar.gardentools.block.feeder;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
 import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.UtilFakePlayer;
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -14,7 +14,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -25,9 +24,7 @@ public class TileFeeder extends BlockEntity {
   private WeakReference<FakePlayer> fakePlayer;
 
   public TileFeeder(BlockPos pos, BlockState state) {
-    super(GardenRegistry.FEEDERTILE, pos, state);
-    EntityBlock y;
-    BlockEntity yy;
+    super(GardenRegistry.TE_FEEDER.get(), pos, state);
   }
 
   public static WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid, BlockPos p) {
@@ -92,6 +89,5 @@ public class TileFeeder extends BlockEntity {
     return null;
   }
 
-  public static void clientTick(Level level, BlockPos blockPos, BlockState blockState, TileFeeder tileFeeder) {
-  }
+  public static void clientTick(Level level, BlockPos blockPos, BlockState blockState, TileFeeder tileFeeder) {}
 }

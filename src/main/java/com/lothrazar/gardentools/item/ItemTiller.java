@@ -1,15 +1,15 @@
 package com.lothrazar.gardentools.item;
 
-import com.lothrazar.gardentools.GardenMod;
-import com.mojang.datafixers.util.Pair;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import com.lothrazar.gardentools.GardenMod;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -30,13 +30,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ItemTiller extends HoeItem {
 
   public ItemTiller(Tier tier, Properties builder) {
-    super(tier, -4, 0.0F, builder);
+    super(tier, -4, 0.0F, builder.stacksTo(1).durability(777));
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
     t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }
@@ -81,6 +81,7 @@ public class ItemTiller extends HoeItem {
     return InteractionResult.SUCCESS;
   }
 
+  @SuppressWarnings("deprecation")
   private boolean hoeBlock(UseOnContext context, BlockPos blockpos) {
     Level world = context.getLevel();
     Block blockHere = world.getBlockState(blockpos).getBlock();
@@ -110,7 +111,6 @@ public class ItemTiller extends HoeItem {
   private void moisturize(Level world, BlockPos pos, BlockState blockstate) {
     try {
       if (GardenMod.CONFIG.getMoisture() > 0) {
-        //        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
         world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()), 3);
       }
     }

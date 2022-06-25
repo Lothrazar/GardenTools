@@ -1,12 +1,12 @@
 package com.lothrazar.gardentools.block.rancher;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
 import com.lothrazar.gardentools.ConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.UtilFakePlayer;
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +29,7 @@ public class TileRancher extends BlockEntity {
   private WeakReference<FakePlayer> fakePlayer;
 
   public TileRancher(BlockPos pos, BlockState state) {
-    super(GardenRegistry.RANCHERTILE, pos, state);
+    super(GardenRegistry.TE_RANCHER.get(), pos, state);
   }
 
   public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid) {

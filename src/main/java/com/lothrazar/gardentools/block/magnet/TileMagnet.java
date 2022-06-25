@@ -1,14 +1,15 @@
 package com.lothrazar.gardentools.block.magnet;
 
-import com.lothrazar.gardentools.ConfigManager;
-import com.lothrazar.gardentools.GardenRegistry;
-import com.lothrazar.gardentools.block.Vector3;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.commons.lang3.tuple.Pair;
+import com.lothrazar.gardentools.ConfigManager;
+import com.lothrazar.gardentools.GardenRegistry;
+import com.lothrazar.gardentools.block.Vector3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +25,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.VanillaInventoryCodeHooks;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class TileMagnet extends BlockEntity {
 
@@ -32,7 +32,7 @@ public class TileMagnet extends BlockEntity {
   private static final float ITEMSPEEDCLOSE = 0.08F;
 
   public TileMagnet(BlockPos pos, BlockState state) {
-    super(GardenRegistry.MAGNETTILE, pos, state);
+    super(GardenRegistry.TE_MAGNET.get(), pos, state);
   }
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileMagnet tile) {
