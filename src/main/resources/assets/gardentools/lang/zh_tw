@@ -1,0 +1,19 @@
+{
+  "itemGroup.gardentools": "Garden Tools",
+  "item.gardentools.cultivator": "耕耘器",
+  "item.gardentools.cultivator.tooltip": "鋤地且支持一定範圍與海拔",
+  "item.gardentools.planter": "播種器",
+  "item.gardentools.planter.tooltip": "檢視身上的種子並播種",
+  "block.gardentools.irrigation_core": "灌溉機",
+  "block.gardentools.irrigation_core.tooltip": "保持周圍農田濕潤",
+  "item.gardentools.watering": "噴壺",
+  "item.gardentools.watering.tooltip": "緩慢地讓周圍莊稼成長",
+  "item.gardentools.fertilizer": "肥料",
+  "item.gardentools.fertilizer.tooltip": "濃縮骨粉",
+  "block.gardentools.feeder": "餵食機",
+  "block.gardentools.feeder.tooltip": "使用附近地上的食物餵食動物'",
+  "block.gardentools.rancher": "畜牧機",
+  "block.gardentools.rancher.tooltip": "剪附近的羊毛和裝牛奶",
+  "block.gardentools.magnet": "直立磁鐵",
+  "block.gardentools.magnet.tooltip": "拉近周圍物品，有過濾功能"
+}
