@@ -1,42 +1,18 @@
 package com.lothrazar.gardentools.block.feeder;
 
-import java.util.List;
-import javax.annotation.Nullable;
 import com.lothrazar.gardentools.GardenRegistry;
-import net.minecraft.ChatFormatting;
+import com.lothrazar.library.block.BaseEntityBlockFlib;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class BlockFeeder extends BaseEntityBlock {
+public class BlockFeeder extends BaseEntityBlockFlib {
 
   public BlockFeeder(Properties properties) {
     super(properties.strength(1.3F).noOcclusion());
-  }
-
-  @Override
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
-    t.withStyle(ChatFormatting.GRAY);
-    tooltip.add(t);
-  }
-
-  @Override
-  public RenderShape getRenderShape(BlockState bs) {
-    return RenderShape.MODEL;
   }
 
   @Override

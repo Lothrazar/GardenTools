@@ -1,31 +1,23 @@
 package com.lothrazar.gardentools.item;
 
-import java.util.List;
-import javax.annotation.Nullable;
-import com.lothrazar.gardentools.GardenMod;
-import net.minecraft.ChatFormatting;
+import com.lothrazar.gardentools.GardenConfigManager;
+import com.lothrazar.library.item.ItemFlib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
 
-public class ItemPlanter extends Item {
+public class ItemPlanter extends ItemFlib {
 
   public ItemPlanter(Properties properties) {
-    super(properties.stacksTo(1).durability(777));
+    super(properties.stacksTo(1).durability(777), new ItemFlib.Settings().tooltip());
   }
 
   @Override
@@ -38,7 +30,7 @@ public class ItemPlanter extends Item {
     BlockPos center = context.getClickedPos().above();
     BlockPos blockpos = null;
     int countPlanted = 0;
-    for (int dist = 0; dist < GardenMod.CONFIG.getPlantingRange(); dist++) {
+    for (int dist = 0; dist < GardenConfigManager.getPlantingRange(); dist++) {
       //get seed ready if any are left
       if (seeds.isEmpty()) {
         seeds = getSeed(player);
@@ -123,13 +115,5 @@ public class ItemPlanter extends Item {
       }
     }
     return ItemStack.EMPTY;
-  }
-
-  @Override
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
-    t.withStyle(ChatFormatting.GRAY);
-    tooltip.add(t);
   }
 }

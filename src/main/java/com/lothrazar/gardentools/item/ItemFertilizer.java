@@ -1,47 +1,30 @@
 package com.lothrazar.gardentools.item;
 
-import java.util.List;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
-import com.lothrazar.gardentools.ConfigManager;
-import net.minecraft.ChatFormatting;
+import com.lothrazar.gardentools.GardenConfigManager;
+import com.lothrazar.library.item.ItemFlib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ItemFertilizer extends Item {
+public class ItemFertilizer extends ItemFlib {
 
-  public static final int MOIST_FINAL = 7;
   final int dist = 3;
 
   public ItemFertilizer(Item.Properties builder) {
-    super(builder);
-  }
-
-  @Override
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
-    t.withStyle(ChatFormatting.GRAY);
-    tooltip.add(t);
+    super(builder, new ItemFlib.Settings().tooltip());
   }
 
   @Override
   public InteractionResult useOn(UseOnContext context) {
     Level world = context.getLevel();
-    final int count = ConfigManager.FERT_POWER.get();
+    final int count = GardenConfigManager.FERT_POWER.get();
     for (int i = 0; i < count; i++) {
       BoneMealItem.applyBonemeal(context.getItemInHand(), world, context.getClickedPos(), context.getPlayer());
     }
@@ -52,8 +35,8 @@ public class ItemFertilizer extends Item {
       BlockState bs = world.getBlockState(posCurrent);
       if (bs.hasProperty(FarmBlock.MOISTURE)) {
         int moisture = bs.getValue(FarmBlock.MOISTURE);
-        if (moisture < MOIST_FINAL) {
-          world.setBlock(posCurrent, bs.setValue(FarmBlock.MOISTURE, MOIST_FINAL), 3);
+        if (moisture < FarmBlock.MAX_MOISTURE) {
+          world.setBlock(posCurrent, bs.setValue(FarmBlock.MOISTURE, FarmBlock.MAX_MOISTURE), 3);
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
         }
       }

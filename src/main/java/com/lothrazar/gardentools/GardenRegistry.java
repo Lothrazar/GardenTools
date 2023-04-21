@@ -12,14 +12,15 @@ import com.lothrazar.gardentools.item.ItemFertilizer;
 import com.lothrazar.gardentools.item.ItemPlanter;
 import com.lothrazar.gardentools.item.ItemTiller;
 import com.lothrazar.gardentools.item.ItemWatering;
+import com.lothrazar.library.registry.RegistryFactory;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
+import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,13 +32,12 @@ public class GardenRegistry {
   public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, GardenMod.MODID);
   public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GardenMod.MODID);
   public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, GardenMod.MODID);
-  public static CreativeModeTab TAB = new CreativeModeTab(GardenMod.MODID) {
 
-    @Override
-    public ItemStack makeIcon() {
-      return new ItemStack(I_IRRIGATION_CORE.get());
-    }
-  };
+  @SubscribeEvent
+  public static void buildContents(CreativeModeTabEvent.Register event) {
+    RegistryFactory.buildTab(event, GardenMod.MODID, I_IRRIGATION_CORE.get().asItem(), ITEMS);
+  }
+
   public static final RegistryObject<Block> IRRIGATION_CORE = BLOCKS.register("irrigation_core", () -> new BlockIrrigation(Block.Properties.of(Material.STONE)));
   public static final RegistryObject<Block> RANCHER = BLOCKS.register("rancher", () -> new BlockRancher(Block.Properties.of(Material.METAL)));
   public static final RegistryObject<Block> FEEDER = BLOCKS.register("feeder", () -> new BlockFeeder(Block.Properties.of(Material.METAL)));
@@ -48,13 +48,13 @@ public class GardenRegistry {
   public static final RegistryObject<BlockEntityType<TileFeeder>> TE_FEEDER = TILES.register("feeder", () -> BlockEntityType.Builder.of(TileFeeder::new, FEEDER.get()).build(null));
   public static final RegistryObject<BlockEntityType<TileMagnet>> TE_MAGNET = TILES.register("magnet", () -> BlockEntityType.Builder.of(TileMagnet::new, MAGNET.get()).build(null));
   //
-  public static final RegistryObject<Item> I_IRRIGATION_CORE = ITEMS.register("irrigation_core", () -> new BlockItem(IRRIGATION_CORE.get(), new Item.Properties().tab(TAB)));
-  public static final RegistryObject<Item> I_RANCHER = ITEMS.register("rancher", () -> new BlockItem(RANCHER.get(), new Item.Properties().tab(TAB)));
-  public static final RegistryObject<Item> I_FEEDER = ITEMS.register("feeder", () -> new BlockItem(FEEDER.get(), new Item.Properties().tab(TAB)));
-  public static final RegistryObject<Item> I_MAGNET = ITEMS.register("magnet", () -> new BlockItem(MAGNET.get(), new Item.Properties().tab(TAB)));
+  public static final RegistryObject<Item> I_IRRIGATION_CORE = ITEMS.register("irrigation_core", () -> new BlockItem(IRRIGATION_CORE.get(), new Item.Properties()));
+  public static final RegistryObject<Item> I_RANCHER = ITEMS.register("rancher", () -> new BlockItem(RANCHER.get(), new Item.Properties()));
+  public static final RegistryObject<Item> I_FEEDER = ITEMS.register("feeder", () -> new BlockItem(FEEDER.get(), new Item.Properties()));
+  public static final RegistryObject<Item> I_MAGNET = ITEMS.register("magnet", () -> new BlockItem(MAGNET.get(), new Item.Properties()));
   // items
-  public static final RegistryObject<Item> CULTIVATOR = ITEMS.register("cultivator", () -> new ItemTiller(Tiers.GOLD, new Item.Properties().tab(TAB)));
-  public static final RegistryObject<Item> WATERING = ITEMS.register("watering", () -> new ItemWatering(new Item.Properties().tab(TAB)));
-  public static final RegistryObject<Item> FERTILIZER = ITEMS.register("fertilizer", () -> new ItemFertilizer(new Item.Properties().tab(TAB)));
-  public static final RegistryObject<Item> PLANTER = ITEMS.register("planter", () -> new ItemPlanter(new Item.Properties().tab(TAB)));
+  public static final RegistryObject<Item> CULTIVATOR = ITEMS.register("cultivator", () -> new ItemTiller(Tiers.GOLD, new Item.Properties()));
+  public static final RegistryObject<Item> WATERING = ITEMS.register("watering", () -> new ItemWatering(new Item.Properties()));
+  public static final RegistryObject<Item> FERTILIZER = ITEMS.register("fertilizer", () -> new ItemFertilizer(new Item.Properties()));
+  public static final RegistryObject<Item> PLANTER = ITEMS.register("planter", () -> new ItemPlanter(new Item.Properties()));
 }

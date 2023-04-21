@@ -4,16 +4,15 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+import net.minecraftforge.gradle.common.tasks.SignJar
 
 version = "${mc_version}-${mod_version}"
 group = 'com.lothrazar.gardentools' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'gardentools'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-import net.minecraftforge.gradle.common.tasks.SignJar
-
 minecraft {
-    mappings channel: 'official', version: '1.19'
+    mappings channel: 'official', version: "${mc_version}"
 
     //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
@@ -62,6 +61,11 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
+ 
+    implementation fg.deobf("blank:flib-${mc_version}:${flib_version}")
+	
+    
+	implementation fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
     //   implementation fg.deobf("mezz.jei:${jei_version}")
 
     //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3163007")
@@ -69,19 +73,30 @@ dependencies {
 
 }
 repositories {
-    maven {
-        // location of the maven that hosts JEI files
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-
-//    maven { url = 'https://www.cursemaven.com' }
+  flatDir {
+      dir 'libs'
+  }
+  maven {
+    // location of the maven that hosts JEI files
+    name = "Progwml6 maven"
+    url = 'https://dvs1.progwml6.com/files/maven/'
+  }
+  maven {
+    name = "mappings"
+    url = 'https://dogforce-games.com/maven'
+  }
+  maven {
+    // location of a maven mirror for JEI files, as a fallback
+    name = "ModMaven"
+    url = 'https://modmaven.dev'
+  }
+  maven {
+  	name = "curios"
+    url = 'https://maven.theillusivec4.top/'
+  }
+  maven { url = 'https://maven.blamejared.com' }    
+  maven { url = 'https://www.cursemaven.com'  }
 }
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
@@ -103,6 +118,10 @@ jar {
 jar.finalizedBy('reobfJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 //publish.dependsOn('reobfJar')
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
 
 task signJar(type: SignJar, dependsOn: jar) {
 

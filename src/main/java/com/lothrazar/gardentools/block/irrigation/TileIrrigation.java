@@ -1,7 +1,6 @@
 package com.lothrazar.gardentools.block.irrigation;
 
-import com.lothrazar.gardentools.ConfigManager;
-import com.lothrazar.gardentools.GardenMod;
+import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,11 +11,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -33,8 +32,7 @@ public class TileIrrigation extends BlockEntity {
 
   @Override
   public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-    if (ConfigManager.WATERSRC.get()
-        && cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+    if (GardenConfigManager.WATERSRC.get() && cap == ForgeCapabilities.FLUID_HANDLER) {
       return tankWrapper.cast();
     }
     return super.getCapability(cap, side);
@@ -45,7 +43,7 @@ public class TileIrrigation extends BlockEntity {
     super.onLoad();
     if (!level.isClientSide) {
       AABB box = new AABB(worldPosition);
-      box = box.inflate(GardenMod.CONFIG.getIrrigationRange());
+      box = box.inflate(GardenConfigManager.getIrrigationRange());
       System.setProperty("forge.debugFarmlandWaterManager", "true");
       farmlandTicket = FarmlandWaterManager.addAABBTicket(level, box);
       farmlandTicket.validate();
@@ -63,8 +61,7 @@ public class TileIrrigation extends BlockEntity {
     tile.tank.fill(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), FluidAction.EXECUTE);
     if (tile.farmlandTicket == null) {
       AABB box = new AABB(tile.worldPosition);
-      box = box.inflate(GardenMod.CONFIG.getIrrigationRange());
-      //  System.setProperty("forge.debugFarmlandWaterManager", "true");
+      box = box.inflate(GardenConfigManager.getIrrigationRange());
       tile.farmlandTicket = FarmlandWaterManager.addAABBTicket(level, box);
       tile.farmlandTicket.validate();
     }

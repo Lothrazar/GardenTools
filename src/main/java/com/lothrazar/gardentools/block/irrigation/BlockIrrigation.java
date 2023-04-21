@@ -1,39 +1,26 @@
 package com.lothrazar.gardentools.block.irrigation;
 
-import java.util.List;
-import javax.annotation.Nullable;
-import com.lothrazar.gardentools.ConfigManager;
+import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenRegistry;
-import net.minecraft.ChatFormatting;
+import com.lothrazar.library.block.BaseEntityBlockFlib;
+import com.lothrazar.library.util.SoundUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class BlockIrrigation extends BaseEntityBlock {
+public class BlockIrrigation extends BaseEntityBlockFlib {
 
   public BlockIrrigation(Properties properties) {
     super(properties.strength(1.3F).noOcclusion());
@@ -45,37 +32,23 @@ public class BlockIrrigation extends BaseEntityBlock {
   }
 
   @Override
-  public RenderShape getRenderShape(BlockState bs) {
-    return RenderShape.MODEL;
-  }
-
-  @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
     return createTickerHelper(type, GardenRegistry.TE_IRRIGATION_CORE.get(), world.isClientSide ? null : TileIrrigation::serverTick);
   }
 
   @Override
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
-    t.withStyle(ChatFormatting.GRAY);
-    tooltip.add(t);
-  }
-
-  @SuppressWarnings("deprecation")
-  @Override
   public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-    if (ConfigManager.WATERSRC.get()) {
+    if (GardenConfigManager.WATERSRC.get()) {
       if (!world.isClientSide) {
         BlockEntity tankHere = world.getBlockEntity(pos);
         if (tankHere != null) {
-          IFluidHandler handler = tankHere.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection()).orElse(null);
+          IFluidHandler handler = tankHere.getCapability(ForgeCapabilities.FLUID_HANDLER, hit.getDirection()).orElse(null);
           if (handler != null) {
             if (FluidUtil.interactWithFluidHandler(player, hand, handler)) {
               //success so display new amount
               //and also play the fluid sound
-              if (player instanceof ServerPlayer) {
-                playSoundFromServer((ServerPlayer) player, SoundEvents.BUCKET_FILL);
+              if (player instanceof ServerPlayer sp) {
+                SoundUtil.playSoundFromServer(sp, pos, SoundEvents.BUCKET_FILL, 1, 1);
               }
             }
           }
@@ -86,18 +59,5 @@ public class BlockIrrigation extends BaseEntityBlock {
       }
     }
     return super.use(state, world, pos, player, hand, hit);
-  }
-  //ClientboundSoundPacket(SoundEvent p_237840_, SoundSource p_237841_, double x, double p_237843_, double p_237844_, 
-  //  float p_237845_, float p_237846_, long p_237847_) {
-
-  public static void playSoundFromServer(ServerPlayer entityIn, SoundEvent soundIn) {
-    if (soundIn == null || entityIn == null) {
-      return;
-    }
-    entityIn.connection.send(new ClientboundSoundPacket(
-        soundIn,
-        SoundSource.BLOCKS,
-        entityIn.xOld, entityIn.yOld, entityIn.zOld,
-        1.0f, 1.0f, 0L)); // seed = 0?? 
   }
 }

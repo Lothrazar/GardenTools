@@ -1,26 +1,15 @@
 package com.lothrazar.gardentools.block.rancher;
 
-import java.util.List;
-import javax.annotation.Nullable;
 import com.lothrazar.gardentools.GardenRegistry;
-import net.minecraft.ChatFormatting;
+import com.lothrazar.library.block.BaseEntityBlockFlib;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class BlockRancher extends BaseEntityBlock {
+public class BlockRancher extends BaseEntityBlockFlib {
 
   public BlockRancher(Properties properties) {
     super(properties.strength(1.3F).noOcclusion());
@@ -32,20 +21,7 @@ public class BlockRancher extends BaseEntityBlock {
   }
 
   @Override
-  public RenderShape getRenderShape(BlockState bs) {
-    return RenderShape.MODEL;
-  }
-
-  @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
     return createTickerHelper(type, GardenRegistry.TE_RANCHER.get(), world.isClientSide ? null : TileRancher::serverTick);
-  }
-
-  @Override
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
-    t.withStyle(ChatFormatting.GRAY);
-    tooltip.add(t);
   }
 }

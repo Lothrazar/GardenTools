@@ -2,11 +2,10 @@ package com.lothrazar.gardentools.block.rancher;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.UUID;
-import com.lothrazar.gardentools.ConfigManager;
+import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
-import com.lothrazar.gardentools.UtilFakePlayer;
+import com.lothrazar.library.util.FakePlayerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -32,10 +31,10 @@ public class TileRancher extends BlockEntity {
     super(GardenRegistry.TE_RANCHER.get(), pos, state);
   }
 
-  public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid) {
-    WeakReference<FakePlayer> fakePlayer = UtilFakePlayer.initFakePlayer(sw, uuid, name);
+  public WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name) {
+    WeakReference<FakePlayer> fakePlayer = FakePlayerUtil.initFakePlayer(sw, name);
     if (fakePlayer == null) {
-      GardenMod.LOGGER.error("Fake player failed to init " + name + " " + uuid);
+      GardenMod.LOGGER.error("Fake player failed to init " + name);
       return null;
     }
     //fake player facing the same direction as tile. for throwables
@@ -47,16 +46,16 @@ public class TileRancher extends BlockEntity {
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileRancher tile) {
     if (level.isClientSide || level.getGameTime() % 20 != 0) {
+      //only fire every 20 ticks
       return;
     }
-    //only fire every 20 ticks
-    if ((level instanceof ServerLevel) && tile.fakePlayer == null) {
-      tile.fakePlayer = tile.setupBeforeTrigger((ServerLevel) level, "rancher", UUID.randomUUID());
+    if (tile.fakePlayer == null && (level instanceof ServerLevel sl)) {
+      tile.fakePlayer = tile.setupBeforeTrigger(sl, "rancher");
     }
     int x = tile.worldPosition.getX();
     int y = tile.worldPosition.getY();
     int z = tile.worldPosition.getZ();
-    final int radius = ConfigManager.RANCHER_RANGE.get();
+    final int radius = GardenConfigManager.RANCHER_RANGE.get();
     AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
     //first find items
     List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, aabb);

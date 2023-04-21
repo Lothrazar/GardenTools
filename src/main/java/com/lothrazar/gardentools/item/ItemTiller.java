@@ -3,13 +3,13 @@ package com.lothrazar.gardentools.item;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -36,9 +36,7 @@ public class ItemTiller extends HoeItem {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    MutableComponent t = Component.translatable(getDescriptionId() + ".tooltip");
-    t.withStyle(ChatFormatting.GRAY);
-    tooltip.add(t);
+    tooltip.add(Component.translatable(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
   }
 
   @Override
@@ -51,7 +49,7 @@ public class ItemTiller extends HoeItem {
     BlockPos center = context.getClickedPos();
     Direction face = context.getHorizontalDirection();
     BlockPos blockpos = null;
-    for (int dist = 0; dist < GardenMod.CONFIG.getTillingRange(); dist++) {
+    for (int dist = 0; dist < GardenConfigManager.getTillingRange(); dist++) {
       blockpos = center.relative(face, dist);
       if (world.isEmptyBlock(blockpos)) {
         //air here, went off an edge. try to go down 1
@@ -110,8 +108,8 @@ public class ItemTiller extends HoeItem {
 
   private void moisturize(Level world, BlockPos pos, BlockState blockstate) {
     try {
-      if (GardenMod.CONFIG.getMoisture() > 0) {
-        world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()), 3);
+      if (GardenConfigManager.getMoisture() > 0) {
+        world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenConfigManager.getMoisture()), 3);
       }
     }
     catch (Exception e) {

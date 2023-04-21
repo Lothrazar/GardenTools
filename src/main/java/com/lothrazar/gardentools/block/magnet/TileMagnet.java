@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
-import com.lothrazar.gardentools.ConfigManager;
+import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenRegistry;
 import com.lothrazar.gardentools.block.Vector3;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.VanillaInventoryCodeHooks;
 
@@ -42,7 +42,7 @@ public class TileMagnet extends BlockEntity {
     BlockEntity below = level.getBlockEntity(tile.worldPosition.below());
     Set<Item> filter = new HashSet<>();
     if (below != null) {
-      IItemHandler hopper = below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+      IItemHandler hopper = below.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
       if (hopper != null) {
         filter.addAll(tile.getItemsInItemHandler(hopper));
         if (below instanceof HopperBlockEntity) {
@@ -51,7 +51,7 @@ public class TileMagnet extends BlockEntity {
         }
       }
     }
-    final int radius = ConfigManager.MAGNET_RANGE.get();
+    final int radius = GardenConfigManager.MAGNET_RANGE.get();
     int vradius = 0;
     int x = tile.worldPosition.getX();
     int y = tile.worldPosition.getY();

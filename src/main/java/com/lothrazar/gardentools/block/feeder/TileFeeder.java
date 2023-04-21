@@ -2,11 +2,10 @@ package com.lothrazar.gardentools.block.feeder;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.UUID;
-import com.lothrazar.gardentools.ConfigManager;
+import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenMod;
 import com.lothrazar.gardentools.GardenRegistry;
-import com.lothrazar.gardentools.UtilFakePlayer;
+import com.lothrazar.library.util.FakePlayerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -27,31 +26,31 @@ public class TileFeeder extends BlockEntity {
     super(GardenRegistry.TE_FEEDER.get(), pos, state);
   }
 
-  public static WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, UUID uuid, BlockPos p) {
-    WeakReference<FakePlayer> fakePlayer = UtilFakePlayer.initFakePlayer(sw, uuid, name);
+  public static WeakReference<FakePlayer> setupBeforeTrigger(ServerLevel sw, String name, BlockPos pos) {
+    WeakReference<FakePlayer> fakePlayer = FakePlayerUtil.initFakePlayer(sw, name);
     if (fakePlayer == null) {
-      GardenMod.LOGGER.error("Fake player failed to init " + name + " " + uuid);
+      GardenMod.LOGGER.error("Fake player failed to init " + name + " ");
       return null;
     }
     //fake player facing the same direction as tile. for throwables
-    fakePlayer.get().setPos(p.getX(), p.getY(), p.getZ());
+    fakePlayer.get().setPos(pos.getX(), pos.getY(), pos.getZ());
     //seems to help interact() mob drops like milk
     //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
   }
 
-  public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileFeeder tile) {
+  public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState blockState, TileFeeder tile) {
     if (level.isClientSide || level.getGameTime() % 20 != 0) {
       return;
     }
     //only fire every 20 ticks
-    if ((level instanceof ServerLevel) && tile.fakePlayer == null) {
-      tile.fakePlayer = setupBeforeTrigger((ServerLevel) level, "rancher", UUID.randomUUID(), blockPos);
+    if (tile.fakePlayer == null && (level instanceof ServerLevel)) {
+      tile.fakePlayer = setupBeforeTrigger((ServerLevel) level, "rancher", pos);
     }
     int x = tile.worldPosition.getX();
     int y = tile.worldPosition.getY();
     int z = tile.worldPosition.getZ();
-    final int radius = ConfigManager.FEEDER_RANGE.get();
+    final int radius = GardenConfigManager.FEEDER_RANGE.get();
     AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
     //first find items
     List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, aabb);
@@ -70,7 +69,6 @@ public class TileFeeder extends BlockEntity {
           //ok  feed
           tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, eiBreedingItem.getItem());
           InteractionResult result = entity.mobInteract(tile.fakePlayer.get(), InteractionHand.MAIN_HAND);
-          //          GardenMod.LOGGER.info("result animal feed " + result);
           if (result == InteractionResult.CONSUME || result == InteractionResult.SUCCESS) {
             eiBreedingItem.setItem(tile.fakePlayer.get().getMainHandItem());
           }
