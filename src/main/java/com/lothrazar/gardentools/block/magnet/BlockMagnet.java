@@ -1,7 +1,7 @@
 package com.lothrazar.gardentools.block.magnet;
 
 import com.lothrazar.gardentools.GardenRegistry;
-import com.lothrazar.library.block.BaseEntityBlockFlib;
+import com.lothrazar.library.block.EntityBlockFlib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BlockMagnet extends BaseEntityBlockFlib {
+public class BlockMagnet extends EntityBlockFlib {
 
   static final VoxelShape SHAPE = Block.box(6.0D, 0.0D, 6.0D, 10.0D, 8.0D, 10.0D);
 

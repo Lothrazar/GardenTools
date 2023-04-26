@@ -2,7 +2,7 @@ package com.lothrazar.gardentools.block.irrigation;
 
 import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenRegistry;
-import com.lothrazar.library.block.BaseEntityBlockFlib;
+import com.lothrazar.library.block.EntityBlockFlib;
 import com.lothrazar.library.util.SoundUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +20,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class BlockIrrigation extends BaseEntityBlockFlib {
+public class BlockIrrigation extends EntityBlockFlib {
 
   public BlockIrrigation(Properties properties) {
     super(properties.strength(1.3F).noOcclusion());
