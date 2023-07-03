@@ -21,7 +21,7 @@ issueTrackerURL="https://github.com/Lothrazar/GardenTools/issues" #optional
 modId="gardentools" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
+version="${mod_version}" #mandatory
  # A display name for the mod
 displayName="Garden Tools" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
@@ -29,7 +29,7 @@ updateJSONURL="https://raw.githubusercontent.com/Lothrazar/GardenTools/trunk/1.1
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://www.curseforge.com/minecraft/mc-mods/gardening-tools" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="logoFile.png" #optional
+logoFile="" #optional
 # A text field displayed in the mod UI
 credits="Thanks for this example mod goes to Java" #optional
 # A text field displayed in the mod UI
@@ -54,12 +54,12 @@ Simple tools to speed up farming: tilling, planting, hydrating fields
 [[dependencies.gardentools]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.4,)"
+    versionRange="[1.20.1,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.gardentools]]
     modId="flib"
     mandatory=true
-    versionRange="[0.0.4,)"
+    versionRange="[0.0.5,)"
     ordering="NONE"
     side="BOTH"

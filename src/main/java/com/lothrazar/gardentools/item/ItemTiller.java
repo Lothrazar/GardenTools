@@ -91,7 +91,7 @@ public class ItemTiller extends HoeItem {
     Consumer<UseOnContext> consumer = pair.getSecond();
     if (predicate.test(context)) {
       Player player = context.getPlayer();
-      player.level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+      player.level().playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
       consumer.accept(context);
       this.moisturize(context.getLevel(), blockpos, context.getLevel().getBlockState(blockpos));
       Player playerentity = context.getPlayer();

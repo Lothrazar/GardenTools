@@ -12,18 +12,22 @@ import com.lothrazar.gardentools.item.ItemFertilizer;
 import com.lothrazar.gardentools.item.ItemPlanter;
 import com.lothrazar.gardentools.item.ItemTiller;
 import com.lothrazar.gardentools.item.ItemWatering;
-import com.lothrazar.library.registry.RegistryFactory;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.material.Material;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -32,16 +36,25 @@ public class GardenRegistry {
   public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, GardenMod.MODID);
   public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GardenMod.MODID);
   public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, GardenMod.MODID);
+  private static final ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(GardenMod.MODID, "tab"));
 
   @SubscribeEvent
-  public static void buildContents(CreativeModeTabEvent.Register event) {
-    RegistryFactory.buildTab(event, GardenMod.MODID, I_IRRIGATION_CORE.get().asItem(), ITEMS);
+  public static void onCreativeModeTabRegister(RegisterEvent event) {
+    event.register(Registries.CREATIVE_MODE_TAB, helper -> {
+      helper.register(TAB, CreativeModeTab.builder().icon(() -> new ItemStack(I_IRRIGATION_CORE.get()))
+          .title(Component.translatable("itemGroup." + GardenMod.MODID))
+          .displayItems((enabledFlags, populator) -> {
+            for (RegistryObject<Item> entry : ITEMS.getEntries()) {
+              populator.accept(entry.get());
+            }
+          }).build());
+    });
   }
 
-  public static final RegistryObject<Block> IRRIGATION_CORE = BLOCKS.register("irrigation_core", () -> new BlockIrrigation(Block.Properties.of(Material.STONE)));
-  public static final RegistryObject<Block> RANCHER = BLOCKS.register("rancher", () -> new BlockRancher(Block.Properties.of(Material.METAL)));
-  public static final RegistryObject<Block> FEEDER = BLOCKS.register("feeder", () -> new BlockFeeder(Block.Properties.of(Material.METAL)));
-  public static final RegistryObject<Block> MAGNET = BLOCKS.register("magnet", () -> new BlockMagnet(Block.Properties.of(Material.METAL)));
+  public static final RegistryObject<Block> IRRIGATION_CORE = BLOCKS.register("irrigation_core", () -> new BlockIrrigation(Block.Properties.of()));
+  public static final RegistryObject<Block> RANCHER = BLOCKS.register("rancher", () -> new BlockRancher(Block.Properties.of()));
+  public static final RegistryObject<Block> FEEDER = BLOCKS.register("feeder", () -> new BlockFeeder(Block.Properties.of()));
+  public static final RegistryObject<Block> MAGNET = BLOCKS.register("magnet", () -> new BlockMagnet(Block.Properties.of()));
   //
   public static final RegistryObject<BlockEntityType<TileIrrigation>> TE_IRRIGATION_CORE = TILES.register("irrigation_core", () -> BlockEntityType.Builder.of(TileIrrigation::new, IRRIGATION_CORE.get()).build(null));
   public static final RegistryObject<BlockEntityType<TileRancher>> TE_RANCHER = TILES.register("rancher", () -> BlockEntityType.Builder.of(TileRancher::new, RANCHER.get()).build(null));
