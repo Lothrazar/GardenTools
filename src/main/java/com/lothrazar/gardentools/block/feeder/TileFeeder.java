@@ -35,7 +35,6 @@ public class TileFeeder extends BlockEntity {
     //fake player facing the same direction as tile. for throwables
     fakePlayer.get().setPos(pos.getX(), pos.getY(), pos.getZ());
     //seems to help interact() mob drops like milk
-    //    fakePlayer.get().rotationYaw = UtilEntity.getYawFromFacing(this.getCurrentFacing());
     return fakePlayer;
   }
 
@@ -64,7 +63,6 @@ public class TileFeeder extends BlockEntity {
       if (!entity.isBaby()) {
         //no feedin the child
         ItemEntity eiBreedingItem = tile.findBreedingItem(itemEntities, entity);
-        //        fakePlayer.get().setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.WHEAT));
         if (eiBreedingItem != null) {
           //ok  feed
           tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, eiBreedingItem.getItem());
