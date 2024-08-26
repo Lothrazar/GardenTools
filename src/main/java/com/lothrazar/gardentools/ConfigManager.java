@@ -1,8 +1,8 @@
 package com.lothrazar.gardentools;
 
+import java.nio.file.Path;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import java.nio.file.Path;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
@@ -17,6 +17,7 @@ public class ConfigManager {
   private static IntValue MOISTURE;
   private static IntValue PLANTER_RANGE;
   public static IntValue WATERING_RANGE;
+  public static DoubleValue WATERING_POWER;
   public static IntValue FERT_POWER;
   public static IntValue FEEDER_RANGE;
   public static IntValue RANCHER_RANGE;
@@ -41,6 +42,7 @@ public class ConfigManager {
     MOISTURE = CFG.comment("\r\nMoisture level set by cultivator").defineInRange("cultivator.moisture", 7, 0, 7);
     //watering range
     WATERING_RANGE = CFG.comment("\r\nWatering can range").defineInRange("watering.range", 4, 1, 32);
+    WATERING_POWER = CFG.comment("\r\nPower of the watering can: 0.1 is very weak and 0.99 is very strong").defineInRange("watering.power", 0.5F, 0.001F, 1F);
     //watering percentage
     //fertilizer count==power
     FERT_POWER = CFG.comment("\r\nThe bonemeal-power of the fertilizer").defineInRange("fertilizer.power", 6, 1, 32);

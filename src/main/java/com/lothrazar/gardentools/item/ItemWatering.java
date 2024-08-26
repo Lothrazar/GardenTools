@@ -1,8 +1,8 @@
 package com.lothrazar.gardentools.item;
 
-import com.lothrazar.gardentools.ConfigManager;
 import java.util.List;
 import java.util.stream.Stream;
+import com.lothrazar.gardentools.ConfigManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,8 +27,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
 
 public class ItemWatering extends Item {
-
-  private static final double PCT_GROW_IF_LESS = 0.1;
 
   public ItemWatering(Item.Properties builder) {
     super(builder);
@@ -68,7 +66,7 @@ public class ItemWatering extends Item {
           plantBlock instanceof BonemealableBlock ||
           plantBlock instanceof IPlantable) {
         //a chance on each block
-        if (world.random.nextDouble() < PCT_GROW_IF_LESS) {
+        if (world.random.nextDouble() < ConfigManager.WATERING_POWER.get()) {
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
           if (world instanceof ServerLevel) {
             bs.randomTick((ServerLevel) world, posCurrent, world.random);
