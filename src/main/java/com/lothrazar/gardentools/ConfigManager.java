@@ -24,7 +24,6 @@ public class ConfigManager {
   public static DoubleValue SPEEDFAR;
   public static IntValue MAGNET_RANGE;
   public static BooleanValue WATERSRC;
-
   static {
     initConfig();
   }

@@ -55,8 +55,7 @@ public class UtilFakePlayer {
     fakePlayer.get().connection = new ServerGamePacketListenerImpl(ws.getServer(), new Connection(PacketFlow.SERVERBOUND), fakePlayer.get()) {
 
       @Override
-      public void send(Packet<?> packetIn) {
-      }
+      public void send(Packet<?> packetIn) {}
     };
     fakePlayer.get().setSilent(true);
     return fakePlayer;

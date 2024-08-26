@@ -15,5 +15,4 @@ public class GardenMod {
   public GardenMod() {
     CONFIG = new ConfigManager(FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
   }
-
 }

@@ -36,6 +36,7 @@ public class GardenRegistry {
       return new ItemStack(IRRIGATION);
     }
   };
+
   @SubscribeEvent
   public static void onBlocksRegistry(final RegistryEvent.Register<Block> event) {
     // register a new block here
@@ -67,6 +68,7 @@ public class GardenRegistry {
     r.register(BlockEntityType.Builder.of(TileFeeder::new, GardenRegistry.FEEDER).build(null).setRegistryName("feeder"));
     r.register(BlockEntityType.Builder.of(TileMagnet::new, GardenRegistry.MAGNET).build(null).setRegistryName("magnet"));
   }
+
   @ObjectHolder(GardenMod.MODID + ":irrigation_core")
   static Block IRRIGATION;
   @ObjectHolder(GardenMod.MODID + ":irrigation_core")

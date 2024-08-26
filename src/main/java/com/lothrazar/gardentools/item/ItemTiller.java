@@ -1,10 +1,10 @@
 package com.lothrazar.gardentools.item;
 
-import com.lothrazar.gardentools.GardenMod;
-import com.mojang.datafixers.util.Pair;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import com.lothrazar.gardentools.GardenMod;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,10 +20,8 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FarmBlock;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -47,6 +45,16 @@ public class ItemTiller extends HoeItem {
       return InteractionResult.FAIL;
     }
     //so we got a success from the initial block
+    hoeTillLongrange(context);
+    return InteractionResult.SUCCESS;
+  }
+
+  /**
+   * covers the tilling shape
+   * 
+   * @param context
+   */
+  private void hoeTillLongrange(UseOnContext context) {
     Level world = context.getLevel();
     BlockPos center = context.getClickedPos();
     Direction face = context.getHorizontalDirection();
@@ -78,40 +86,52 @@ public class ItemTiller extends HoeItem {
         }
       }
     }
-    return InteractionResult.SUCCESS;
   }
 
-  private boolean hoeBlock(UseOnContext context, BlockPos blockpos) {
-    Level world = context.getLevel();
-    Block blockHere = world.getBlockState(blockpos).getBlock();
-    Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = HoeItem.TILLABLES.get(blockHere);
-    if (pair == null) {
-      return false;
-    }
-    Predicate<UseOnContext> predicate = pair.getFirst();
-    Consumer<UseOnContext> consumer = pair.getSecond();
-    if (predicate.test(context)) {
-      Player player = context.getPlayer();
-      player.level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-      consumer.accept(context);
-      this.moisturize(context.getLevel(), blockpos, context.getLevel().getBlockState(blockpos));
-      Player playerentity = context.getPlayer();
-      world.playSound(playerentity, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-      if (playerentity != null) {
-        context.getItemInHand().hurtAndBreak(1, playerentity, (p) -> {
-          p.broadcastBreakEvent(context.getHand());
-        });
+  /**
+   * Makes a new UseOnContext with the given position to till this portion. Not restricted to vanilla hoes and farmland, it uses the consumer/predicate pair to be compatible
+   * 
+   * @param contextIn
+   * @param blockpos
+   * @return
+   */
+  private boolean hoeBlock(UseOnContext contextIn, BlockPos blockpos) {
+    Level world = contextIn.getLevel();
+    //for THIS block, does it have any tilable actoins registered
+    Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> hoeAction = HoeItem.TILLABLES.get(world.getBlockState(blockpos).getBlock());
+    if (hoeAction != null) {
+      //yes this block has an action  
+      //wrap up a new context for the new relative position. dont reuse incoming context
+      UseOnContext newContext = new UseOnContext(contextIn.getPlayer(), contextIn.getHand(),
+          new BlockHitResult(contextIn.getPlayer().getUpVector(0), contextIn.getHorizontalDirection(), blockpos, false));
+      //does it pass the predicate? can we do tilling
+      if (hoeAction.getFirst().test(newContext)) {
+        //accept runs the tilling action for the farmland
+        hoeAction.getSecond().accept(newContext);
+        Player player = contextIn.getPlayer();
+        if (player != null) {
+          //till sound at this position
+          player.level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+          //damage the item
+          contextIn.getItemInHand().hurtAndBreak(1, player, (p) -> {
+            p.broadcastBreakEvent(contextIn.getHand());
+          });
+        }
+        //custom moisture action from this config
+        this.moisturize(world, blockpos);
+        return true;
       }
-      return true;
     }
     return false;
   }
 
-  private void moisturize(Level world, BlockPos pos, BlockState blockstate) {
+  private void moisturize(Level world, BlockPos pos) {
+    var blockstate = world.getBlockState(pos);
     try {
-      if (GardenMod.CONFIG.getMoisture() > 0) {
-        //        blockstate = blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture());
-        world.setBlock(pos, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()), 3);
+      //hoe can do things other than farmland
+      if (blockstate.hasProperty(FarmBlock.MOISTURE) && GardenMod.CONFIG.getMoisture() > 0) {
+        //may or may not be mojang farmland
+        world.setBlock(pos, blockstate.setValue(FarmBlock.MOISTURE, GardenMod.CONFIG.getMoisture()), 3);
       }
     }
     catch (Exception e) {
