@@ -7,14 +7,14 @@
   ],
   "key": {
     "t": {
-      "item": "minecraft:dispenser"
+      "item": "minecraft:repeater"
     },
     "w": {
-      "item": "gardentools:irrigation_core"
+      "item": "minecraft:hopper"
     }
   },
   "result": {
-    "item": "gardentools:feeder",
+    "id": "gardentools:magnet",
     "count": 1
   }
 }

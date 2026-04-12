@@ -1,14 +1,13 @@
 package com.lothrazar.gardentools;
 
-import com.lothrazar.library.config.ConfigTemplate;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 
-public class GardenConfigManager extends ConfigTemplate {
+public class GardenConfigManager  {
 
-  private static ForgeConfigSpec CONFIG;
+  protected static ModConfigSpec CONFIG;
   private static IntValue TILLING_RANGE;
   private static IntValue IRRIG_RANGE;
   private static IntValue MOISTURE;
@@ -23,7 +22,7 @@ public class GardenConfigManager extends ConfigTemplate {
   public static IntValue MAGNET_RANGE;
   public static BooleanValue WATERSRC;
   static {
-    final ForgeConfigSpec.Builder BUILDER = builder();
+    final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     BUILDER.comment("General settings").push(GardenMod.MODID);
     //cultivator
     TILLING_RANGE = BUILDER.comment("\r\nRange of cultivator item").defineInRange("cultivator.range", 9, 2, 32);
@@ -47,13 +46,9 @@ public class GardenConfigManager extends ConfigTemplate {
     //magnet
     MAGNET_RANGE = BUILDER.comment("\r\nMagnet max range").defineInRange("magnet.range", 16, 1, 256);
     SPEEDCLOSE = BUILDER.comment("\r\nMagnet speed when items are close within 3 blocks").defineInRange("magnet.speed.close", 0.07F, 0.01F, 0.5F);
-    SPEEDCLOSE = BUILDER.comment("\r\nMagnet speed when items are farther out than 3 blocks").defineInRange("magnet.speed.far", 0.31F, 0.01F, 0.99F);
+    SPEEDFAR = BUILDER.comment("\r\nMagnet speed when items are farther out than 3 blocks").defineInRange("magnet.speed.far", 0.31F, 0.01F, 0.99F);
     BUILDER.pop();
     CONFIG = BUILDER.build();
-  }
-
-  public GardenConfigManager() {
-    CONFIG.setConfig(setup(GardenMod.MODID));
   }
 
   public static int getTillingRange() {

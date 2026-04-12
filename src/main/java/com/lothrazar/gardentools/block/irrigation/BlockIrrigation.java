@@ -7,18 +7,19 @@ import com.lothrazar.library.util.SoundUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraft.world.InteractionHand;
 
 public class BlockIrrigation extends EntityBlockFlib {
 
@@ -37,27 +38,22 @@ public class BlockIrrigation extends EntityBlockFlib {
   }
 
   @Override
-  public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+  public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
     if (GardenConfigManager.WATERSRC.get()) {
       if (!world.isClientSide) {
-        BlockEntity tankHere = world.getBlockEntity(pos);
-        if (tankHere != null) {
-          IFluidHandler handler = tankHere.getCapability(ForgeCapabilities.FLUID_HANDLER, hit.getDirection()).orElse(null);
-          if (handler != null) {
-            if (FluidUtil.interactWithFluidHandler(player, hand, handler)) {
-              //success so display new amount
-              //and also play the fluid sound
-              if (player instanceof ServerPlayer sp) {
-                SoundUtil.playSoundFromServer(sp, pos, SoundEvents.BUCKET_FILL, 1, 1);
-              }
+        IFluidHandler handler = world.getCapability(Capabilities.FluidHandler.BLOCK, pos, hit.getDirection());
+        if (handler != null) {
+          if (FluidUtil.interactWithFluidHandler(player, hand, handler)) {
+            if (player instanceof ServerPlayer sp) {
+              SoundUtil.playSoundFromServer(sp, pos, SoundEvents.BUCKET_FILL, 1, 1);
             }
           }
         }
       }
-      if (FluidUtil.getFluidHandler(player.getItemInHand(hand)).isPresent()) {
-        return InteractionResult.SUCCESS;
+      if (stack.getCapability(Capabilities.FluidHandler.ITEM) != null) {
+        return ItemInteractionResult.SUCCESS;
       }
     }
-    return super.use(state, world, pos, player, hand, hit);
+    return super.useItemOn(stack, state, world, pos, player, hand, hit);
   }
 }
