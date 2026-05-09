@@ -3,39 +3,31 @@ package com.lothrazar.gardentools.block.irrigation;
 import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.FarmlandWaterManager;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.ticket.AABBTicket;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.common.FarmlandWaterManager;
+import net.neoforged.neoforge.common.ticket.AABBTicket;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class TileIrrigation extends BlockEntity {
 
   private AABBTicket farmlandTicket;
   FluidTank tank;
-  private final LazyOptional<FluidTank> tankWrapper = LazyOptional.of(() -> tank);
 
   public TileIrrigation(BlockPos pos, BlockState state) {
     super(GardenRegistry.TE_IRRIGATION_CORE.get(), pos, state);
     tank = new FluidTank(FluidType.BUCKET_VOLUME);
   }
 
-  @Override
-  public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-    if (GardenConfigManager.WATERSRC.get() && cap == ForgeCapabilities.FLUID_HANDLER) {
-      return tankWrapper.cast();
-    }
-    return super.getCapability(cap, side);
+  public IFluidHandler getFluidHandler() {
+    return GardenConfigManager.WATERSRC.get() ? tank : null;
   }
 
   @Override

@@ -12,7 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraftforge.common.Tags;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.neoforged.neoforge.common.Tags;
 
 public class ItemPlanter extends ItemFlib {
 
@@ -80,9 +81,8 @@ public class ItemPlanter extends ItemFlib {
     }
     //loop is complete
     if (player != null && countPlanted > 0) {
-      context.getItemInHand().hurtAndBreak(countPlanted, player, (p) -> {
-        p.broadcastBreakEvent(context.getHand());
-      });
+      EquipmentSlot slot = context.getHand() == net.minecraft.world.InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+      context.getItemInHand().hurtAndBreak(countPlanted, player, slot);
     }
     return InteractionResult.SUCCESS;
   }

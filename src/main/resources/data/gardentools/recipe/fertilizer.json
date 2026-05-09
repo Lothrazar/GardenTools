@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "gardentools:fertilizer",
+    "id": "gardentools:fertilizer",
     "count": 5
   }
 }

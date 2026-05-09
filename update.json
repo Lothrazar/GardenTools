@@ -1,19 +1,9 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/gardening-tools",
   "promos": {
-    "1.20.1-latest": "1.2.0"
+    "1.21.1-latest": "1.2.0"
   },
-  "1.20.1": {
-    "1.1.3": "Ported"
-   ,"1.2.0":"Fixed the Cultivator tilling the tallgrass plant if it is the first block in the chain with dirt and air behind it.  Updated cultivator for compatibility with non-vanilla dirt farmland.  Fix Watering Can is Backwards When Playing Left Handed.  Add new config value for Watering Can power.  "
-  },
-  "1.19.4": {
-    "1.1.3": "Ported to Minecraft 1.19"
-   ,"1.2.0":"Fixed the Cultivator tilling the tallgrass plant if it is the first block in the chain with dirt and air behind it.  Updated cultivator for compatibility with non-vanilla dirt farmland.  Fix Watering Can is Backwards When Playing Left Handed.  Add new config value for Watering Can power.  "
-  },
-  "1.18.2": {
-    "1.1.2": "Ported"
-    ,"1.1.3": "Fixed not compatible with new forge versions (37.0.50+).  Planter no longer consumes seeds if in creative mode. "
-    ,"1.2.0":"Fixed the Cultivator tilling the tallgrass plant if it is the first block in the chain with dirt and air behind it.  Updated cultivator for compatibility with non-vanilla dirt farmland.  Fix Watering Can is Backwards When Playing Left Handed.  Add new config value for Watering Can power.  "
+  "1.21.1": {
+    "1.2.0": "Ported"
   }
 }

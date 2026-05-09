@@ -20,8 +20,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.IForgeShearable;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.IShearable;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 public class TileRancher extends BlockEntity {
 
@@ -66,14 +66,14 @@ public class TileRancher extends BlockEntity {
         continue;
       }
       /*****************************/
-      if (entity instanceof IForgeShearable) {
+      if (entity instanceof IShearable) {
         //shear
-        IForgeShearable sheep = (IForgeShearable) entity;
-        if (sheep.isShearable(tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition)) {
+        IShearable sheep = (IShearable) entity;
+        if (sheep.isShearable(tile.fakePlayer.get(), tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition)) {
           tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
           //
           List<ItemStack> drops = sheep.onSheared(tile.fakePlayer.get(),
-              tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition, 1);
+              tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition);
           drops.forEach(d -> {
             entity.spawnAtLocation(d, 1.0F);
           });

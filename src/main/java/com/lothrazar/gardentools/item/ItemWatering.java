@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.IPlantable;
 
 public class ItemWatering extends ItemFlib {
 
@@ -24,6 +23,7 @@ public class ItemWatering extends ItemFlib {
     super(builder.stacksTo(1), new ItemFlib.Settings().tooltip());
   }
 
+  // IPlantable was deleted !
   @Override
   public InteractionResult useOn(UseOnContext context) {
     Level world = context.getLevel();
@@ -47,8 +47,7 @@ public class ItemWatering extends ItemFlib {
       //encourage growth with ticks, without direct bonemeal shortcut 
       Block plantBlock = bs.getBlock();
       if (HarvestUtil.hasAgeProperty(bs) ||
-          plantBlock instanceof BonemealableBlock ||
-          plantBlock instanceof IPlantable) {
+          plantBlock instanceof BonemealableBlock) {
         //a chance on each block
         if (world.random.nextDouble() < GardenConfigManager.WATERING_POWER.get()) {
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
