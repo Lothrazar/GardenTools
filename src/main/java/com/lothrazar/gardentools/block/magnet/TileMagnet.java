@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import com.lothrazar.gardentools.GardenConfigManager;
 import com.lothrazar.gardentools.GardenRegistry;
-import com.lothrazar.library.core.Vector3;
+import com.lothrazar.library.data.Vector3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
