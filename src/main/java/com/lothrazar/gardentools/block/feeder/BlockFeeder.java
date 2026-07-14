@@ -22,6 +22,6 @@ public class BlockFeeder extends EntityBlockFlib {
 
   @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-    return createTickerHelper(type, GardenRegistry.TE_FEEDER.get(), world.isClientSide ? TileFeeder::clientTick : TileFeeder::serverTick);
+    return createTickerHelper(type, GardenRegistry.TE_FEEDER.get(), world.isClientSide ? null : TileFeeder::serverTick);
   }
 }

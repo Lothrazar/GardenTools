@@ -85,5 +85,4 @@ public class TileFeeder extends BlockEntity {
     return null;
   }
 
-  public static void clientTick(Level level, BlockPos blockPos, BlockState blockState, TileFeeder tileFeeder) {}
 }
