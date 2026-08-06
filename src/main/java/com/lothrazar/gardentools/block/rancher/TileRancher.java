@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +45,7 @@ public class TileRancher extends BlockEntity {
   }
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileRancher tile) {
-    if (level.isClientSide || level.getGameTime() % 20 != 0) {
+    if (level.isClientSide() || level.getGameTime() % 20 != 0) {
       //only fire every 20 ticks
       return;
     }
@@ -56,7 +56,7 @@ public class TileRancher extends BlockEntity {
     int y = tile.worldPosition.getY();
     int z = tile.worldPosition.getZ();
     final int radius = GardenConfigManager.RANCHER_RANGE.get();
-    AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
+    AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxY(), 0.0D);
     //first find items
     List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, aabb);
     //find entities
@@ -75,7 +75,7 @@ public class TileRancher extends BlockEntity {
           List<ItemStack> drops = sheep.onSheared(tile.fakePlayer.get(),
               tile.fakePlayer.get().getMainHandItem(), level, tile.worldPosition);
           drops.forEach(d -> {
-            entity.spawnAtLocation(d, 1.0F);
+            entity.spawnAtLocation((ServerLevel) level, d, 1.0F);
           });
           tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
           break;
@@ -100,7 +100,7 @@ public class TileRancher extends BlockEntity {
             else {
               //              GardenMod.LOGGER.info("doreplace is false, drop new milk" + result);
               eiBucket.setItem(tile.fakePlayer.get().getMainHandItem());
-              cow.spawnAtLocation(new ItemStack(Items.MILK_BUCKET));
+              cow.spawnAtLocation((ServerLevel) level, new ItemStack(Items.MILK_BUCKET));
             }
             tile.fakePlayer.get().setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             break;

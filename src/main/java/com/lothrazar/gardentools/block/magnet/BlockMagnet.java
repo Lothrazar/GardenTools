@@ -33,6 +33,6 @@ public class BlockMagnet extends EntityBlockFlib {
 
   @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-    return createTickerHelper(type, GardenRegistry.TE_MAGNET.get(), world.isClientSide ? null : TileMagnet::serverTick);
+    return createTickerHelper(type, GardenRegistry.TE_MAGNET.get(), world.isClientSide() ? null : TileMagnet::serverTick);
   }
 }

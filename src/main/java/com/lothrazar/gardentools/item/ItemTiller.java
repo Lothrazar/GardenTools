@@ -19,25 +19,31 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 public class ItemTiller extends HoeItem {
 
-  public ItemTiller(Tier tier, Properties builder) {
-    super(tier, builder.stacksTo(1).durability(777));
+  // GOLD's stats, but with a much higher custom durability (vanilla gold tools are famously fragile)
+  private static final ToolMaterial CULTIVATOR_MATERIAL = new ToolMaterial(
+      ToolMaterial.GOLD.incorrectBlocksForDrops(), 777, ToolMaterial.GOLD.speed(),
+      ToolMaterial.GOLD.attackDamageBonus(), ToolMaterial.GOLD.enchantmentValue(), ToolMaterial.GOLD.repairItems());
+
+  public ItemTiller(Properties builder) {
+    super(CULTIVATOR_MATERIAL, 0.0F, -3.0F, builder.stacksTo(1));
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-    tooltip.add(Component.translatable(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay tooltipDisplay,
+      java.util.function.Consumer<Component> tooltip, TooltipFlag flagIn) {
+    tooltip.accept(Component.translatable(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
   }
 
   @Override
@@ -108,8 +114,8 @@ public class ItemTiller extends HoeItem {
   private void moisturize(Level world, BlockPos pos) {
     var blockstate = world.getBlockState(pos);
     try {
-      if (blockstate.hasProperty(FarmBlock.MOISTURE) && GardenConfigManager.getMoisture() > 0) {
-        world.setBlock(pos, blockstate.setValue(FarmBlock.MOISTURE, GardenConfigManager.getMoisture()), 3);
+      if (blockstate.hasProperty(FarmlandBlock.MOISTURE) && GardenConfigManager.getMoisture() > 0) {
+        world.setBlock(pos, blockstate.setValue(FarmlandBlock.MOISTURE, GardenConfigManager.getMoisture()), 3);
       }
     }
     catch (Exception e) {

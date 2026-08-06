@@ -10,7 +10,7 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemFertilizer extends ItemFlib {
@@ -33,10 +33,10 @@ public class ItemFertilizer extends ItemFlib {
     Stream<BlockPos> shape = BlockPos.betweenClosedStream(pos.offset(-dist, -dist, -dist), pos.offset(dist, dist, dist));
     shape.forEach(posCurrent -> {
       BlockState bs = world.getBlockState(posCurrent);
-      if (bs.hasProperty(FarmBlock.MOISTURE)) {
-        int moisture = bs.getValue(FarmBlock.MOISTURE);
-        if (moisture < FarmBlock.MAX_MOISTURE) {
-          world.setBlock(posCurrent, bs.setValue(FarmBlock.MOISTURE, FarmBlock.MAX_MOISTURE), 3);
+      if (bs.hasProperty(FarmlandBlock.MOISTURE)) {
+        int moisture = bs.getValue(FarmlandBlock.MOISTURE);
+        if (moisture < FarmlandBlock.MAX_MOISTURE) {
+          world.setBlock(posCurrent, bs.setValue(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE), 3);
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
         }
       }

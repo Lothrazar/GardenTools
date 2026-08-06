@@ -7,7 +7,7 @@ import com.lothrazar.library.util.SoundUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -34,15 +34,16 @@ public class BlockIrrigation extends EntityBlockFlib {
 
   @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-    return createTickerHelper(type, GardenRegistry.TE_IRRIGATION_CORE.get(), world.isClientSide ? null : TileIrrigation::serverTick);
+    return createTickerHelper(type, GardenRegistry.TE_IRRIGATION_CORE.get(), world.isClientSide() ? null : TileIrrigation::serverTick);
   }
 
   @Override
-  public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+  public InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
     if (GardenConfigManager.WATERSRC.get()) {
-      if (!world.isClientSide) {
-        IFluidHandler handler = world.getCapability(Capabilities.FluidHandler.BLOCK, pos, hit.getDirection());
-        if (handler != null) {
+      if (!world.isClientSide()) {
+        var resourceHandler = world.getCapability(Capabilities.Fluid.BLOCK, pos, hit.getDirection());
+        if (resourceHandler != null) {
+          IFluidHandler handler = IFluidHandler.of(resourceHandler);
           if (FluidUtil.interactWithFluidHandler(player, hand, handler)) {
             if (player instanceof ServerPlayer sp) {
               SoundUtil.playSoundFromServer(sp, pos, SoundEvents.BUCKET_FILL, 1, 1);
@@ -50,8 +51,8 @@ public class BlockIrrigation extends EntityBlockFlib {
           }
         }
       }
-      if (stack.getCapability(Capabilities.FluidHandler.ITEM) != null) {
-        return ItemInteractionResult.SUCCESS;
+      if (stack.getCapability(Capabilities.Fluid.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack)) != null) {
+        return InteractionResult.SUCCESS;
       }
     }
     return super.useItemOn(stack, state, world, pos, player, hand, hit);

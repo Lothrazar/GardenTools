@@ -100,7 +100,7 @@ public class ItemPlanter extends ItemFlib {
   }
 
   private ItemStack getSeed(Player player) {
-    for (ItemStack stack : player.getInventory().items) {
+    for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
       if (!stack.isEmpty()) {
         if (stack.is(Tags.Items.SEEDS)) {
           return stack;

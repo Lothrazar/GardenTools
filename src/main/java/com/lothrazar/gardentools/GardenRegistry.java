@@ -19,13 +19,13 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -42,17 +42,17 @@ public class GardenRegistry {
   public static final DeferredHolder<Block, BlockFeeder> FEEDER = BLOCKS.register("feeder", () -> new BlockFeeder(Block.Properties.of()));
   public static final DeferredHolder<Block, BlockMagnet> MAGNET = BLOCKS.register("magnet", () -> new BlockMagnet(Block.Properties.of()));
   //
-  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileIrrigation>> TE_IRRIGATION_CORE = TILES.register("irrigation_core", () -> BlockEntityType.Builder.of(TileIrrigation::new, IRRIGATION_CORE.get()).build(null));
-  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileRancher>> TE_RANCHER = TILES.register("rancher", () -> BlockEntityType.Builder.of(TileRancher::new, RANCHER.get()).build(null));
-  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileFeeder>> TE_FEEDER = TILES.register("feeder", () -> BlockEntityType.Builder.of(TileFeeder::new, FEEDER.get()).build(null));
-  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileMagnet>> TE_MAGNET = TILES.register("magnet", () -> BlockEntityType.Builder.of(TileMagnet::new, MAGNET.get()).build(null));
+  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileIrrigation>> TE_IRRIGATION_CORE = TILES.register("irrigation_core", () -> new BlockEntityType<>(TileIrrigation::new, IRRIGATION_CORE.get()));
+  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileRancher>> TE_RANCHER = TILES.register("rancher", () -> new BlockEntityType<>(TileRancher::new, RANCHER.get()));
+  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileFeeder>> TE_FEEDER = TILES.register("feeder", () -> new BlockEntityType<>(TileFeeder::new, FEEDER.get()));
+  public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileMagnet>> TE_MAGNET = TILES.register("magnet", () -> new BlockEntityType<>(TileMagnet::new, MAGNET.get()));
   //
-  public static final DeferredHolder<Item, BlockItem> I_IRRIGATION_CORE = ITEMS.register("irrigation_core", () -> new BlockItem(IRRIGATION_CORE.get(), new Item.Properties()));
-  public static final DeferredHolder<Item, BlockItem> I_RANCHER = ITEMS.register("rancher", () -> new BlockItem(RANCHER.get(), new Item.Properties()));
-  public static final DeferredHolder<Item, BlockItem> I_FEEDER = ITEMS.register("feeder", () -> new BlockItem(FEEDER.get(), new Item.Properties()));
-  public static final DeferredHolder<Item, BlockItem> I_MAGNET = ITEMS.register("magnet", () -> new BlockItem(MAGNET.get(), new Item.Properties()));
+  public static final DeferredHolder<Item, BlockItem> I_IRRIGATION_CORE = ITEMS.register("irrigation_core", () -> new BlockItem(IRRIGATION_CORE.get(), new Item.Properties().useBlockDescriptionPrefix()));
+  public static final DeferredHolder<Item, BlockItem> I_RANCHER = ITEMS.register("rancher", () -> new BlockItem(RANCHER.get(), new Item.Properties().useBlockDescriptionPrefix()));
+  public static final DeferredHolder<Item, BlockItem> I_FEEDER = ITEMS.register("feeder", () -> new BlockItem(FEEDER.get(), new Item.Properties().useBlockDescriptionPrefix()));
+  public static final DeferredHolder<Item, BlockItem> I_MAGNET = ITEMS.register("magnet", () -> new BlockItem(MAGNET.get(), new Item.Properties().useBlockDescriptionPrefix()));
   // items
-  public static final DeferredHolder<Item, ItemTiller> CULTIVATOR = ITEMS.register("cultivator", () -> new ItemTiller(Tiers.GOLD, new Item.Properties()));
+  public static final DeferredHolder<Item, ItemTiller> CULTIVATOR = ITEMS.register("cultivator", () -> new ItemTiller(new Item.Properties()));
   public static final DeferredHolder<Item, ItemWatering> WATERING = ITEMS.register("watering", () -> new ItemWatering(new Item.Properties()));
   public static final DeferredHolder<Item, ItemFertilizer> FERTILIZER = ITEMS.register("fertilizer", () -> new ItemFertilizer(new Item.Properties()));
   public static final DeferredHolder<Item, ItemPlanter> PLANTER = ITEMS.register("planter", () -> new ItemPlanter(new Item.Properties()));
@@ -70,9 +70,12 @@ public class GardenRegistry {
   @SubscribeEvent
   public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
     event.registerBlockEntity(
-        Capabilities.FluidHandler.BLOCK,
+        Capabilities.Fluid.BLOCK,
         TE_IRRIGATION_CORE.get(),
-        (tile, side) -> tile.getFluidHandler()
+        (tile, side) -> {
+          IFluidHandler handler = tile.getFluidHandler();
+          return handler == null ? null : new com.lothrazar.gardentools.block.irrigation.IFluidHandlerResourceHandler(handler);
+        }
     );
   }
 }

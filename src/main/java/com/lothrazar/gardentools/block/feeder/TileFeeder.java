@@ -39,7 +39,7 @@ public class TileFeeder extends BlockEntity {
   }
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState blockState, TileFeeder tile) {
-    if (level.isClientSide || level.getGameTime() % 20 != 0) {
+    if (level.isClientSide() || level.getGameTime() % 20 != 0) {
       return;
     }
     //only fire every 20 ticks
@@ -50,7 +50,7 @@ public class TileFeeder extends BlockEntity {
     int y = tile.worldPosition.getY();
     int z = tile.worldPosition.getZ();
     final int radius = GardenConfigManager.FEEDER_RANGE.get();
-    AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxBuildHeight(), 0.0D);
+    AABB aabb = (new AABB(x, y, z, x + 1, y + 1, z + 1)).inflate(radius).expandTowards(0.0D, level.getMaxY(), 0.0D);
     //first find items
     List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, aabb);
     //find entities

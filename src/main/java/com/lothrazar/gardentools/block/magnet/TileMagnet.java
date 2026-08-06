@@ -33,14 +33,15 @@ public class TileMagnet extends BlockEntity {
   }
 
   public static <E extends BlockEntity> void serverTick(Level level, BlockPos blockPos, BlockState blockState, TileMagnet tile) {
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       return;
     }
     BlockPos belowPos = tile.worldPosition.below();
     BlockEntity below = level.getBlockEntity(belowPos);
     Set<Item> filter = new HashSet<>();
     if (below != null) {
-      IItemHandler hopper = level.getCapability(Capabilities.ItemHandler.BLOCK, belowPos, null);
+      var hopperHandler = level.getCapability(Capabilities.Item.BLOCK, belowPos, null);
+      IItemHandler hopper = hopperHandler == null ? null : IItemHandler.of(hopperHandler);
       if (hopper != null) {
         filter.addAll(tile.getItemsInItemHandler(hopper));
         if (below instanceof HopperBlockEntity hopperTile) {
@@ -61,11 +62,11 @@ public class TileMagnet extends BlockEntity {
   private List<Item> getConnectedItemHandlerItems(Level level, HopperBlockEntity hopper) {
     Direction hopperFacing = hopper.getBlockState().getValue(HopperBlock.FACING);
     BlockPos connectedPos = hopper.getBlockPos().relative(hopperFacing);
-    IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, connectedPos, hopperFacing.getOpposite());
-    if (handler == null) {
+    var resourceHandler = level.getCapability(Capabilities.Item.BLOCK, connectedPos, hopperFacing.getOpposite());
+    if (resourceHandler == null) {
       return Collections.emptyList();
     }
-    return getItemsInItemHandler(handler);
+    return getItemsInItemHandler(IItemHandler.of(resourceHandler));
   }
 
   private static final double ENTITY_PULL_DIST = 0.4;

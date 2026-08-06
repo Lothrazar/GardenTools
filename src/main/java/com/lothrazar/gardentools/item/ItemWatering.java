@@ -14,7 +14,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemWatering extends ItemFlib {
@@ -36,10 +36,10 @@ public class ItemWatering extends ItemFlib {
     shape.forEach(posCurrent -> {
       //      first, moisturize farmland just like tiller
       BlockState bs = world.getBlockState(posCurrent);
-      if (bs.hasProperty(FarmBlock.MOISTURE)) {
-        int moisture = bs.getValue(FarmBlock.MOISTURE);
-        if (moisture < FarmBlock.MAX_MOISTURE) {
-          world.setBlock(posCurrent, bs.setValue(FarmBlock.MOISTURE, FarmBlock.MAX_MOISTURE), 3);
+      if (bs.hasProperty(FarmlandBlock.MOISTURE)) {
+        int moisture = bs.getValue(FarmlandBlock.MOISTURE);
+        if (moisture < FarmlandBlock.MAX_MOISTURE) {
+          world.setBlock(posCurrent, bs.setValue(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE), 3);
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
         }
       }
@@ -49,10 +49,10 @@ public class ItemWatering extends ItemFlib {
       if (HarvestUtil.hasAgeProperty(bs) ||
           plantBlock instanceof BonemealableBlock) {
         //a chance on each block
-        if (world.random.nextDouble() < GardenConfigManager.WATERING_POWER.get()) {
+        if (world.getRandom().nextDouble() < GardenConfigManager.WATERING_POWER.get()) {
           world.addParticle(ParticleTypes.RAIN, posCurrent.getX(), posCurrent.getY(), posCurrent.getZ(), 0.0D, 0.0D, 0.0D);
           if (world instanceof ServerLevel) {
-            bs.randomTick((ServerLevel) world, posCurrent, world.random);
+            bs.randomTick((ServerLevel) world, posCurrent, world.getRandom());
           }
           //          world.notifyBlockUpdate(posCurrent, state, state, 3);
         }

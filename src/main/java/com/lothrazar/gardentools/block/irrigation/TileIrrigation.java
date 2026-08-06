@@ -33,7 +33,7 @@ public class TileIrrigation extends BlockEntity {
   @Override
   public void onLoad() {
     super.onLoad();
-    if (!level.isClientSide) {
+    if (!level.isClientSide()) {
       AABB box = new AABB(worldPosition);
       box = box.inflate(GardenConfigManager.getIrrigationRange());
       System.setProperty("forge.debugFarmlandWaterManager", "true");
@@ -44,7 +44,7 @@ public class TileIrrigation extends BlockEntity {
 
   @Override
   public void onChunkUnloaded() {
-    if (!level.isClientSide && farmlandTicket != null) {
+    if (!level.isClientSide() && farmlandTicket != null) {
       farmlandTicket.invalidate();
     }
   }
