@@ -6,12 +6,8 @@
     " t "
   ],
   "key": {
-    "t": {
-      "item": "minecraft:repeater"
-    },
-    "w": {
-      "item": "minecraft:hopper"
-    }
+    "t": "minecraft:repeater",
+    "w": "minecraft:hopper"
   },
   "result": {
     "id": "gardentools:magnet",

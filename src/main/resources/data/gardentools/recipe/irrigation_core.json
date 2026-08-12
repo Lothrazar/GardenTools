@@ -6,15 +6,9 @@
     "gtg"
   ],
   "key": {
-    "t": {
-      "item": "minecraft:gold_nugget"
-    },
-    "w": {
-      "item": "minecraft:water_bucket"
-    },
-    "g": {
-      "item": "minecraft:glowstone_dust"
-    }
+    "t": "minecraft:gold_nugget",
+    "w": "minecraft:water_bucket",
+    "g": "minecraft:glowstone_dust"
   },
   "result": {
     "id": "gardentools:irrigation_core",

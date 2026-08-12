@@ -6,12 +6,8 @@
     " t "
   ],
   "key": {
-    "t": {
-      "item": "minecraft:bucket"
-    },
-    "w": {
-      "item": "gardentools:irrigation_core"
-    }
+    "t": "minecraft:bucket",
+    "w": "gardentools:irrigation_core"
   },
   "result": {
     "id": "gardentools:rancher",

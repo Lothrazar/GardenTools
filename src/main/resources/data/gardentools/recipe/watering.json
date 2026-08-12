@@ -6,15 +6,9 @@
     "yby"
   ],
   "key": {
-    "b": {
-      "item": "minecraft:water_bucket"
-    },
-    "c": {
-      "item": "minecraft:chain"
-    },
-    "y": {
-      "item": "minecraft:clay"
-    }
+    "b": "minecraft:water_bucket",
+    "c": "minecraft:iron_chain",
+    "y": "minecraft:clay"
   },
   "result": {
     "id": "gardentools:watering",
